@@ -1,0 +1,51 @@
+/* Task states move forward as workers pick up and finish work.
+   A failed task keeps its identity so callers can inspect the error later.
+type Status = "queued" | "running" | "done" | "failed";
+
+interface Task {
+  id: string;
+  title: string;
+  status: Status;
+  labels: string[];
+  run?: (signal: AbortSignal) => Promise<string>;
+}
+*/
+
+class TaskQueue {
+  private readonly tasks = new Map<string, Task>();
+  private nextId = 1;
+
+  add(title: string, labels: string[] = []): Task {
+    const task: Task = {
+      id: `task-${this.nextId++}`,
+      title: title.trim() || "Untitled task",
+      status: "queued",
+      labels: [...new Set(labels.map((label) => label.toLowerCase()))],
+    };
+    this.tasks.set(task.id, task);
+    return task;
+  }
+
+  async execute(id: string, signal: AbortSignal): Promise<string> {
+    const task = this.tasks.get(id);
+    if (!task) throw new Error(`Unknown task: ${id}`);
+    if (!task.run) throw new Error(`Task ${id} has no runner`);
+    task.status = "running";
+    try {
+      const result = await task.run(signal);
+      task.status = "done";
+      return result;
+    } catch (error) {
+      task.status = "failed";
+      throw error;
+    }
+  }
+
+  list(status?: Status): Task[] {
+    return [...this.tasks.values()].filter((task) => !status || task.status === status);
+  }
+}
+
+export function createQueue(): TaskQueue {
+  return new TaskQueue();
+}

@@ -1,0 +1,53 @@
+package streamdemo
+
+import (
+	"fmt"
+	"strings"
+	"time"
+)
+
+/* Event stores one normalized observation.
+   Its tags are cleaned before the record is returned. */
+type Event struct {
+	ID        int
+	Name      string
+	CreatedAt time.Time
+	Tags      []string
+}
+
+/* A sink accepts events from the stream and can report write failures.
+type Sink interface {
+	Write(Event) error
+}
+*/
+
+func NormalizeName(value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return "anonymous"
+	}
+	return strings.ToLower(value)
+}
+
+func BuildEvent(id int, name string, tags ...string) Event {
+	cleanTags := make([]string, 0, len(tags))
+	for _, tag := range tags {
+		if trimmed := strings.TrimSpace(tag); trimmed != "" {
+			cleanTags = append(cleanTags, strings.ToLower(trimmed))
+		}
+	}
+	return Event{ID: id, Name: NormalizeName(name), CreatedAt: time.Now(), Tags: cleanTags}
+}
+
+func SendBatch(sink Sink, events []Event) error {
+	for index, event := range events {
+		if err := sink.Write(event); err != nil {
+			return fmt.Errorf("write event %d at position %d: %w", event.ID, index, err)
+		}
+	}
+	return nil
+}
+
+func FormatEvent(event Event) string {
+	return fmt.Sprintf("#%d %s (%s)", event.ID, event.Name, strings.Join(event.Tags, ", "))
+}
