@@ -4,6 +4,7 @@ import {
   type Highlighter,
   type GrammarState,
   type SpecialLanguage,
+  hastToHtml,
 } from 'shiki'
 
 /** Languages enabled in the first tokenizer spike. */
@@ -64,25 +65,29 @@ export async function createCodeTokenizer(
 }
 
 
-// export interface GrammarStateCodeTokenizerOption {
-//   /** Languages to preload when creating the tokenizer. */
-//   languages?: readonly BundledLanguage[]
-//   /** Shiki theme to use when producing HTML. */
-//   theme?: string
-
-//   /** Shiki grammar state */
-//   grammerState?: GrammarState
-// }
-
+/** Highlights consecutive code blocks while preserving grammar context between blocks. */
 export interface GrammarStateCodeTokenizer{
+  /**
+   * Highlight a code block and return its outgoing grammar state.
+   *
+   * @param code - Source code for the current block, split at complete line boundaries.
+   * @param language - Language to highlight. Unsupported languages use plain text.
+   * @param lastGrammarState - State returned by the preceding block. Omit for the
+   * first block, and reuse states only with the same tokenizer, language, and theme.
+   */
   highlight(code: string, language?: string, lastGrammarState?: GrammarState): {
+    /** HTML generated from the highlighted code block. */
     html: string;
+    /** State to pass to the next block, or undefined when no grammar state is available. */
     currentGrammarState: GrammarState | undefined
   }
 }
 
-/** Create grammar state tokenizer, 3rd params the grammar of the prevous state will be passed
- *  which will help to hilight the current block
+/**
+ * Create a reusable tokenizer for highlighting consecutive code blocks.
+ * Initialization loads the configured languages and theme asynchronously.
+ * Subsequent highlight calls are synchronous and derive HTML and the outgoing
+ * grammar state from a single tokenization pass.
  */
 export async function createGrammarStateCodeTokenizer(
   options : TokenizerOptions = {}
@@ -101,18 +106,14 @@ export async function createGrammarStateCodeTokenizer(
         ? language as BundledLanguage
         : FALLBACK_LANGUAGE
       
-      const html = highlighter.codeToHtml(code, {
+      const highlightedTree = highlighter.codeToHast(code, {
         lang: resolvedLanguage,
         theme,
         grammarState: lastGrammarState,
       })
 
-      const tokens = highlighter.codeToTokens(code, {
-        lang: resolvedLanguage,
-        theme,
-        grammarState: lastGrammarState,
-      })
-      const currentGrammarState = highlighter.getLastGrammarState(tokens.tokens)
+      const html = hastToHtml(highlightedTree)
+      const currentGrammarState = highlighter.getLastGrammarState(highlightedTree)
 
       return {html, currentGrammarState}
     }
