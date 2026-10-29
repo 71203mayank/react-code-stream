@@ -1,0 +1,50 @@
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
+
+namespace streamdemo {
+
+/* A record keeps its display label and associated values together.
+   The sample intentionally leaves normalization to a helper below. */
+struct Record {
+    int id;
+    std::string label;
+    std::vector<std::string> values;
+};
+
+/* Normalize trims surrounding whitespace before applying lowercase.
+std::string normalize(std::string value) {
+    const auto first = value.find_first_not_of(" \t\n");
+    if (first == std::string::npos) return "untitled";
+    const auto last = value.find_last_not_of(" \t\n");
+    value = value.substr(first, last - first + 1);
+    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) {
+        return static_cast<char>(std::tolower(c));
+    });
+    return value;
+}
+*/
+
+Record make_record(int id, std::string label, std::vector<std::string> values) {
+    for (auto& value : values) value = normalize(std::move(value));
+    values.erase(std::remove(values.begin(), values.end(), "untitled"), values.end());
+    return {id, normalize(std::move(label)), std::move(values)};
+}
+
+void print_record(const Record& record) {
+    std::cout << '[' << record.id << "] " << record.label << ": ";
+    for (std::size_t i = 0; i < record.values.size(); ++i) {
+        if (i) std::cout << " | ";
+        std::cout << record.values[i];
+    }
+    std::cout << '\n';
+}
+
+}  // namespace streamdemo
+
+int main() {
+    auto item = streamdemo::make_record(17, "  Mixed Case ", {"Alpha", " BETA ", ""});
+    streamdemo::print_record(item);
+    return item.values.size() == 2 ? 0 : 1;
+}

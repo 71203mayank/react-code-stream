@@ -1,0 +1,1 @@
+// Strategy B: rAF + useRef streaming component

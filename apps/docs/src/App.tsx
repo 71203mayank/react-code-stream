@@ -1,121 +1,118 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useEffect, useRef, useState } from 'react'
+import {
+  createCodeTokenizer,
+  DEFAULT_LANGUAGES,
+  type CodeTokenizer,
+} from '../../../packages/react-code-stream/src/core/tokenizer'
 import './App.css'
+import GrammarTokenizer from './components/grammarTokenizer'
+
+const initialCode = `type Message = {
+  role: 'assistant' | 'user'
+  content: string
+}
+
+export function greet(name: string): Message {
+  return {
+    role: 'assistant',
+    content: \`Hello, \${name}!\`,
+  }
+}`
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [code, setCode] = useState(initialCode)
+  const [language, setLanguage] = useState<string>('typescript')
+  const [tokenizer, setTokenizer] = useState<CodeTokenizer | null>(null)
+  const [highlightedHtml, setHighlightedHtml] = useState('')
+  const [isStreaming, setIsStreaming] = useState(false)
+  const streamTimer = useRef<number | undefined>(undefined)
+
+  useEffect(() => {
+    let active = true
+
+    void createCodeTokenizer().then((instance) => {
+      if (active) setTokenizer(instance)
+    })
+
+    return () => {
+      active = false
+      window.clearInterval(streamTimer.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!tokenizer) return
+    setHighlightedHtml(tokenizer.highlight(code, language))
+  }, [code, language, tokenizer])
+
+  function simulateStream() {
+    window.clearInterval(streamTimer.current)
+    setCode('')
+    setIsStreaming(true)
+
+    let position = 0
+    streamTimer.current = window.setInterval(() => {
+      position = Math.min(position + 5, initialCode.length)
+      setCode(initialCode.slice(0, position))
+
+      if (position >= initialCode.length) {
+        window.clearInterval(streamTimer.current)
+        setIsStreaming(false)
+      }
+    }, 45)
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
+    <main className="playground">
+      <header className="page-header">
+        <p className="eyebrow">Tokenizer playground</p>
+        <h1>React Code Stream</h1>
+        <p className="subtitle">
+          Explore Shiki output and watch highlighting update as code arrives.
+        </p>
+      </header>
+
+      <section className="controls" aria-label="Tokenizer controls">
+        <label>
+          Language
+          <select
+            value={language}
+            onChange={(event) => setLanguage(event.target.value)}
+          >
+            {DEFAULT_LANGUAGES.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button type="button" onClick={simulateStream} disabled={!tokenizer || isStreaming}>
+          {isStreaming ? 'Streaming…' : 'Simulate stream'}
         </button>
+        {!tokenizer && <span className="status">Loading tokenizer…</span>}
       </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <section className="panels">
+        <div className="panel">
+          <label htmlFor="source-code">Source code</label>
+          <textarea
+            id="source-code"
+            spellCheck={false}
+            value={code}
+            onChange={(event) => setCode(event.target.value)}
+          />
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+        <div className="panel">
+          <p className="panel-label">Highlighted output</p>
+          <div
+            className="highlighted-output"
+            aria-live="polite"
+            dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+          />
         </div>
       </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <GrammarTokenizer />
+    </main>
   )
 }
 

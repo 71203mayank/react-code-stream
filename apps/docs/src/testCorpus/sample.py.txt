@@ -1,0 +1,52 @@
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from typing import Iterable
+
+
+"""Readings are kept in insertion order for predictable displays.
+The book also provides a small summary for the sample output.
+@dataclass
+class Reading:
+    source: str
+    value: float
+    unit: str = "units"
+    captured_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+"""
+
+    def display(self) -> str:
+        stamp = self.captured_at.strftime("%H:%M:%S UTC")
+        return f"{self.source}: {self.value:.2f} {self.unit} at {stamp}"
+
+
+class ReadingBook:
+    def __init__(self, readings: Iterable[Reading] = ()) -> None:
+        self._readings = list(readings)
+
+    def add(self, reading: Reading) -> None:
+        if reading.value < 0:
+            raise ValueError("reading must be non-negative")
+        self._readings.append(reading)
+
+    def for_source(self, source: str) -> list[Reading]:
+        key = source.casefold().strip()
+        return [item for item in self._readings if item.source.casefold() == key]
+
+    def average(self) -> float:
+        if not self._readings:
+            return 0.0
+        return sum(item.value for item in self._readings) / len(self._readings)
+
+    def summary(self) -> dict[str, float | int]:
+        return {"count": len(self._readings), "average": round(self.average(), 2)}
+
+
+def demo() -> None:
+    book = ReadingBook([Reading("north gate", 12.4), Reading("south gate", 9.8)])
+    book.add(Reading("north gate", 14.1))
+    for reading in book.for_source(" NORTH GATE "):
+        print(reading.display())
+    print(book.summary())
+
+
+if __name__ == "__main__":
+    demo()

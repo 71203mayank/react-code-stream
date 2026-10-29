@@ -1,0 +1,29 @@
+CHUNK STREAM TEST NOTES
+=======================
+
+This file is plain text on purpose. It includes punctuation, short lines, and
+longer paragraphs so a tokenizer can see different boundary patterns.
+
+The imaginary station at Pine Ridge opens before sunrise. At 05:17, the first
+train rolls past the empty platform, carrying warm light in every window.
+Someone has left a blue umbrella beside the timetable. No name, no note.
+
+CHECKLIST
+---------
+[x] Keep the kettle on
+[x] Count the paper tickets
+[ ] Ask who owns the umbrella
+[ ] Replace the clock battery
+
+Numbers: 0, 1, 2, 13, 21, 144, 3.14159
+Symbols: @ # $ % ^ & * ( ) [ ] { } < > / \
+Quotes: "wait here"; 'turn left'; `literal token`
+
+A short sentence.
+Another one, with a comma, a dash — and an ellipsis...
+
+When the morning fog lifts, the hills look closer than they did the night
+before. The station clock is still seven minutes slow, and the umbrella is
+still leaning against the timetable. The next train arrives at 06:42.
+
+END OF NOTES

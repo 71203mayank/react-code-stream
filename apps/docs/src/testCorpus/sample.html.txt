@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Field Notes — Stream Demo</title>
+    <link rel="stylesheet" href="sample.css">
+  </head>
+  <body>
+    <!-- The header stays compact so the notes remain the focus.
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="Field Notes home">Field Notes</a>
+      <nav aria-label="Main navigation">
+        <a href="#latest">Latest</a>
+        <a href="#archive">Archive</a>
+        <a href="#about">About</a>
+      </nav>
+    </header>
+         Navigation links jump to sections on this demo page. -->
+    <main id="home">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">A small collection</p>
+        <h1 id="page-title">Observations from the edge of town</h1>
+        <p>Short notes about weather, walking, and the places in between.</p>
+        <a class="button" href="#latest">Read the notes <span aria-hidden="true">→</span></a>
+      </section>
+      <section id="latest" class="note-list" aria-label="Recent notes">
+        <article class="note-card">
+          <time datetime="2026-05-12">May 12, 2026</time>
+          <h2>Rain on the footbridge</h2>
+          <p>The river rose overnight; a line of leaves caught against the north rail.</p>
+          <a href="#note-rain">Continue reading</a>
+        </article>
+        <article class="note-card">
+          <time datetime="2026-04-28">April 28, 2026</time>
+          <h2>Three kinds of quiet</h2>
+          <p>Before dawn, the neighborhood has a different shape and a softer pace.</p>
+          <a href="#note-quiet">Continue reading</a>
+        </article>
+      </section>
+    </main>
+    <footer id="about"><small>Made for slow mornings. © 2026 Field Notes.</small></footer>
+  </body>
+</html>
