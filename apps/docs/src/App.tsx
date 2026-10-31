@@ -6,6 +6,7 @@ import {
 } from '../../../packages/react-code-stream/src/core/tokenizer'
 import './App.css'
 import GrammarTokenizer from './components/grammarTokenizer'
+import IncrementalDemo from './components/incremental'
 
 const initialCode = `type Message = {
   role: 'assistant' | 'user'
@@ -112,6 +113,7 @@ function App() {
         </div>
       </section>
       <GrammarTokenizer />
+      <IncrementalDemo />
     </main>
   )
 }
