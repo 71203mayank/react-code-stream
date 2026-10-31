@@ -9,6 +9,7 @@ import {
   type GrammarStateCodeTokenizer,
 } from '../../../../../packages/react-code-stream/src/core/tokenizer'
 import './incremental.css'
+import { simulateStream } from '../../utils/simulateStream'
 
 const files = import.meta.glob<string>('../../testCorpus/*.txt', {
   query: '?raw', import: 'default', eager: true,
@@ -49,13 +50,13 @@ function CacheStream({ tokenizer, source, language }: {
   const [chunkCount, setChunkCount] = useState(0)
   const [receivedCharacters, setReceivedCharacters] = useState(0)
   const [error, setError] = useState('')
-  const timer = useRef<number | undefined>(undefined)
+  const stopStream = useRef<(() => void) | undefined>(undefined)
 
-  useEffect(() => () => window.clearInterval(timer.current), [])
+  useEffect(() => () => stopStream.current?.(), [])
 
   function clearCache() {
-    window.clearInterval(timer.current)
-    timer.current = undefined
+    stopStream.current?.()
+    stopStream.current = undefined
     cache.reset()
     setSnapshot(cache.update(''))
     setStreaming(false)
@@ -68,34 +69,25 @@ function CacheStream({ tokenizer, source, language }: {
 
   function startStream() {
     clearCache()
-    let position = 0
-    let receivedSource = ''
     setStreaming(true)
-
-    timer.current = window.setInterval(() => {
-      // Choose a NEW size on every tick, not once per stream.
-      const size = 5 + Math.floor(Math.random() * 11)
-      const nextChunk = characters.slice(position, position + size).join('')
-      position = Math.min(position + size, characters.length)
-      receivedSource += nextChunk
-      try {
-        setSnapshot(cache.update(receivedSource))
-        setChunk(nextChunk)
+    stopStream.current = simulateStream(source, {
+      onChunk: (update) => {
+        setSnapshot(cache.update(update.source))
+        setChunk(update.chunk)
         setChunkCount((count) => count + 1)
-        setReceivedCharacters(position)
-        if (position === characters.length) {
-          window.clearInterval(timer.current)
-          timer.current = undefined
-          setStreaming(false)
-          setFinished(true)
-        }
-      } catch (reason) {
-        window.clearInterval(timer.current)
-        timer.current = undefined
+        setReceivedCharacters(update.receivedCharacters)
+      },
+      onComplete: () => {
+        stopStream.current = undefined
+        setStreaming(false)
+        setFinished(true)
+      },
+      onError: (reason) => {
+        stopStream.current = undefined
         setStreaming(false)
         setError(reason instanceof Error ? reason.message : String(reason))
-      }
-    }, 80)
+      },
+    })
   }
 
   const lastCompleted = snapshot.completedBlocks[snapshot.completedBlocks.length - 1]

@@ -1,0 +1,39 @@
+.react-code-stream {
+  box-sizing: border-box;
+  overflow: auto;
+  min-width: 0;
+  text-align: left;
+}
+
+.react-code-stream > pre {
+  box-sizing: border-box;
+  min-width: 100%;
+  width: max-content;
+  margin: 0;
+  padding: 16px;
+  background: inherit;
+  color: inherit;
+  font: 13px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace;
+  tab-size: 2;
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.react-code-stream > pre > code {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: pre;
+}
+
+.react-code-stream > pre > code > .react-code-stream__block,
+.react-code-stream .react-code-stream__block .line {
+  display: inline;
+  white-space: pre;
+}

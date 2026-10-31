@@ -1,0 +1,31 @@
+.stream-code-demo {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+  text-align: left;
+}
+
+.stream-code-demo__controls {
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.controls .stream-code-demo__follow {
+  display: flex;
+  align-items: center;
+  align-self: center;
+}
+
+.stream-code-demo__status {
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.stream-code-demo__output {
+  border: 1px solid #30313b;
+  border-radius: 10px;
+}
+
+.stream-code-demo .panel textarea {
+  height: 430px;
+}
