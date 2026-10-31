@@ -7,6 +7,7 @@ import {
 import './App.css'
 import GrammarTokenizer from './components/grammarTokenizer'
 import IncrementalDemo from './components/incremental'
+import StreamCodeDemo from './components/streamCode'
 
 const initialCode = `type Message = {
   role: 'assistant' | 'user'
@@ -112,6 +113,7 @@ function App() {
           />
         </div>
       </section>
+      <StreamCodeDemo />
       <GrammarTokenizer />
       <IncrementalDemo />
     </main>

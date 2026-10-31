@@ -67,6 +67,8 @@ export async function createCodeTokenizer(
 
 /** Highlights consecutive code blocks while preserving grammar context between blocks. */
 export interface GrammarStateCodeTokenizer{
+  /** Release resources when this tokenizer is no longer needed. */
+  dispose?(): void
   /**
    * Highlight a code block and return its outgoing grammar state.
    *
@@ -101,6 +103,9 @@ export async function createGrammarStateCodeTokenizer(
   const loadedLanguages = new Set(highlighter.getLoadedLanguages())
 
   return {
+    dispose() {
+      highlighter.dispose()
+    },
     highlight(code, language = FALLBACK_LANGUAGE, lastGrammarState) {
       const resolvedLanguage = loadedLanguages.has(language)
         ? language as BundledLanguage
