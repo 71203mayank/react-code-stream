@@ -38,15 +38,6 @@ This is something to test, not assume: first compare highlighting blocks with sa
 
 Render blocks as separate React elements with stable keys. When a block is reused, keep its existing element; create new output for blocks that changed. Start with ordinary React rendering. We can explore `requestAnimationFrame` or direct DOM updates later if the playground shows a real performance problem.
 
-## Learning steps
-
-1. Use Shiki to highlight a complete code sample.
-2. Split a sample into blocks and highlight them in order.
-3. Try passing Shiki grammar state from one block to the next.
-4. Cache earlier block results while the final block grows.
-5. Compare cached output with highlighting the full sample at once.
-6. Render the blocks in React and observe which parts update.
-
 ```mermaid
 flowchart LR
     A[Highlight full sample] --> B[Highlight blocks in order]
