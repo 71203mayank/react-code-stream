@@ -47,12 +47,17 @@ function CorpusStream({ source, language }: { source: string; language: string }
     })
   }
 
+  function loadCompleteFile() {
+    stop()
+    setCode(source)
+  }
+
   return (
     <>
       <div className="controls stream-code-demo__controls">
         <button type="button" onClick={start}>{streaming ? 'Restart stream' : 'Start stream'}</button>
         <button type="button" onClick={stop} disabled={!streaming}>Stop</button>
-        <button type="button" onClick={() => { stop(); setCode(source) }}>Show full file</button>
+        <button type="button" onClick={loadCompleteFile}>Load complete file (no streaming)</button>
         <button type="button" onClick={() => { stop(); setCode('') }}>Clear</button>
         <label className="stream-code-demo__follow">
           <input type="checkbox" checked={autoScroll} onChange={(event) => setAutoScroll(event.target.checked)} />
@@ -91,7 +96,7 @@ export default function StreamCodeDemo() {
     <section className="stream-code-demo" aria-labelledby="stream-code-demo-title">
       <p className="eyebrow">React component playground</p>
       <h2 id="stream-code-demo-title">StreamCode corpus preview</h2>
-      <p>Stream random 5–15 character chunks every 80 ms, or edit the received source to check highlighting after changes.</p>
+      <p>Stream random 5–15 character chunks every 80 ms, load the complete file at once, or edit the received source to check highlighting after changes.</p>
       <div className="controls stream-code-demo__controls">
         <label>
           Corpus file
