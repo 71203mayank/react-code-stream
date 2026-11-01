@@ -1,4 +1,19 @@
-# React + TypeScript + Vite
+# React Code Stream playground
+
+The playground is available at `/`, with a separate benchmark page at `/benchmark`.
+
+From the repository root, run a production benchmark with:
+
+```bash
+npm run build:benchmark
+npm run benchmark
+```
+
+Open `/benchmark` on the printed URL, or follow the link from the playground. For development, build the library with `npm run build:lib`, then run `npm run dev`.
+
+The benchmark compares StreamCode and react-syntax-highlighter using the existing corpus. It supports full-file and fixed-chunk streaming trials, warmups, alternating renderer order, repetition settings, cancellation, and JSON export. Results include final DOM latency, long tasks where supported, animation-frame gaps, input delivery delay, and final source preservation. These are page-level observations, not exact component CPU time or pixel paint measurements. Keep the tab visible and DevTools closed for measurements.
+
+## Vite template notes
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

@@ -111,7 +111,7 @@ The archive includes the built files, README, and license. Tests stay in the rep
 | Directory | Purpose |
 | --- | --- |
 | [`packages/react-code-stream`](packages/react-code-stream) | The React component, Shiki tokenizer, incremental block cache, and tests. |
-| [`apps/docs`](apps/docs) | The local playground with interactive demos and sample code files. |
+| [`apps/docs`](apps/docs) | The local playground, sample code files, and `/benchmark` route comparing StreamCode with react-syntax-highlighter. |
 | [`docs`](docs) | Project notes explaining the design, tokenizer, and block cache. |
 
 Start with the [project overview](docs/project-overview.md) and [architecture](docs/architecture.md) for more detail.

@@ -1,0 +1,26 @@
+.benchmark-page { font: 15px/1.6 system-ui, sans-serif; color: #d9e1ef; background: #11151d; color-scheme: dark; }
+.benchmark-page * { box-sizing: border-box; }
+.benchmark-page { max-width: 1150px; margin: 40px auto; padding: 0 24px 60px; }
+.benchmark-page h1 { font-size: clamp(28px, 5vw, 40px); margin: 4px 0 12px; }
+.benchmark-page h2 { font-size: 20px; margin-top: 30px; }
+.benchmark-page p { max-width: 900px; }
+.benchmark-page .eyebrow { color: #b9a1ff; margin: 0; }
+.benchmark-page .notice { background: #473817; border: 1px solid #816523; padding: 12px; border-radius: 8px; }
+.benchmark-page fieldset { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; border: 1px solid #394455; border-radius: 10px; padding: 20px; margin: 24px 0; }
+.benchmark-page label { display: grid; gap: 6px; }
+.benchmark-page input, .benchmark-page select, .benchmark-page button { font: inherit; border: 1px solid #465168; background: #20293a; color: inherit; border-radius: 6px; padding: 9px 12px; min-width: 0; }
+.benchmark-page button { cursor: pointer; }
+.benchmark-page button:disabled { opacity: .5; cursor: default; }
+.benchmark-page .actions { display: flex; gap: 12px; }
+.benchmark-page .output { height: 432px; overflow: hidden; border: 1px solid #394455; border-radius: 8px; background: #1e1e1e; }
+.benchmark-page .benchmark-code, .benchmark-page .benchmark-code code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace !important; font-size: 13px !important; line-height: 1.6 !important; tab-size: 2 !important; }
+.benchmark-page .benchmark-code { width: 100%; overflow: auto !important; }
+.benchmark-page .benchmark-code code { display: block; padding: 0; border-radius: 0; background: transparent; color: inherit; }
+.benchmark-page .table-scroll { overflow-x: auto; margin: 20px 0; }
+.benchmark-page table { width: 100%; border-collapse: collapse; text-align: left; }
+.benchmark-page th, .benchmark-page td { padding: 12px; border-bottom: 1px solid #394455; }
+.benchmark-page thead { background: #20293a; }
+.benchmark-page .notes { color: #aebdd4; }
+.benchmark-page li { margin-bottom: 10px; }
+.benchmark-page { text-align: left; border-radius: 10px; }
+.benchmark-page h1, .benchmark-page h2 { color: #d9e1ef; }
