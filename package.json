@@ -1,6 +1,6 @@
 {
   "name": "react-code-stream",
-  "private":"true",
+  "private": true,
   "version": "0.1.0",
   "description": "react-code-stream monorepo",
   "workspaces": [
@@ -8,10 +8,10 @@
     "apps/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npm run dev --workspace=@react-code-stream/docs",
+    "test": "npm run test --workspace=react-code-stream",
+    "dev": "npm run dev --workspace=docs",
     "build": "npm run build --workspaces --if-present",
     "build:lib": "npm run build --workspace=react-code-stream",
-    "build:docs": "npm run build --workspace=@react-code-stream/docs"
+    "build:docs": "npm run build --workspace=docs"
   }
 }

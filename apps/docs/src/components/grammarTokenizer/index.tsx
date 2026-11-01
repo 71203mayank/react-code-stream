@@ -3,7 +3,7 @@ import {
   createGrammarStateCodeTokenizer,
   DEFAULT_LANGUAGES,
   type GrammarStateCodeTokenizer,
-} from '../../../../../packages/react-code-stream/src/core/tokenizer'
+} from 'react-code-stream/tokenizer'
 import type { GrammarState } from 'shiki'
 import './grammarTokenizer.css'
 

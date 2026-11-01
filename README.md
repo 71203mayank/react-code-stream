@@ -27,6 +27,7 @@ npm ci
 Start the local playground:
 
 ```bash
+npm run build:lib
 npm run dev --workspace=docs
 ```
 
@@ -53,7 +54,21 @@ npm run preview --workspace=docs
 
 ## Component usage
 
-The playground imports `StreamCode` directly from the package source. Pass the entire accumulated code string as children on each update:
+The StreamCode playground uses the built local workspace package. Import the component and its stylesheet:
+
+```tsx
+import { StreamCode } from 'react-code-stream'
+import 'react-code-stream/styles.css'
+```
+
+The lower-level APIs used by the tokenizer and cache demos are also available:
+
+```ts
+import { createGrammarStateCodeTokenizer } from 'react-code-stream/tokenizer'
+import { createIncrementalTokenizer } from 'react-code-stream/incremental'
+```
+
+The package provides ESM output and TypeScript declarations, and currently targets React 19.2. Pass the entire accumulated code string as children on each update:
 
 ```tsx
 <StreamCode
@@ -68,6 +83,28 @@ The playground imports `StreamCode` directly from the package source. Pass the e
 ```
 
 Keep the key stable while streaming the same file. Change it to start a new highlighting session. To highlight a complete file, pass its full contents as `code` in one update.
+
+## Package development
+
+Build the library's JavaScript, stylesheet, and TypeScript declarations:
+
+```bash
+npm run build:lib
+```
+
+Run type checking, tests, a build, and a package contents preview:
+
+```bash
+npm run check --workspace=react-code-stream
+```
+
+Create a local package archive for testing in another app:
+
+```bash
+npm pack --workspace=react-code-stream
+```
+
+The archive includes the built files, README, and license. Tests stay in the repository and are excluded from the archive.
 
 ## Repository structure
 

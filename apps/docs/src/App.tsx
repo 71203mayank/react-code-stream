@@ -3,7 +3,7 @@ import {
   createCodeTokenizer,
   DEFAULT_LANGUAGES,
   type CodeTokenizer,
-} from '../../../packages/react-code-stream/src/core/tokenizer'
+} from 'react-code-stream/tokenizer'
 import './App.css'
 import GrammarTokenizer from './components/grammarTokenizer'
 import IncrementalDemo from './components/incremental'
