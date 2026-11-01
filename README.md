@@ -1,5 +1,7 @@
 # React Code Stream
 
+[![npm version](https://img.shields.io/npm/v/react-code-stream)](https://www.npmjs.com/package/react-code-stream)
+
 A React syntax highlighter designed for code streamed by AI applications.
 
 🚧 **Experimental and under active development.** 🚧
