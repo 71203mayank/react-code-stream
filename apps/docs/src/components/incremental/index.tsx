@@ -3,11 +3,11 @@ import {
   createIncrementalTokenizer,
   type CachedBlock,
   type CacheState,
-} from '../../../../../packages/react-code-stream/src/core/incremental'
+} from 'react-code-stream/incremental'
 import {
   createGrammarStateCodeTokenizer,
   type GrammarStateCodeTokenizer,
-} from '../../../../../packages/react-code-stream/src/core/tokenizer'
+} from 'react-code-stream/tokenizer'
 import './incremental.css'
 import { simulateStream } from '../../utils/simulateStream'
 

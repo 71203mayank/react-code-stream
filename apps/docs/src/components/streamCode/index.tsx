@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { StreamCode } from '../../../../../packages/react-code-stream/src'
+import { StreamCode } from 'react-code-stream'
+import 'react-code-stream/styles.css'
 import { simulateStream } from '../../utils/simulateStream'
 import './streamCode.css'
 

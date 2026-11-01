@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/index.ts", "src/core/tokenizer.ts", "src/core/incremental.ts", "src/react/StreamCode.css.d.ts"],
+  "exclude": ["test", "vite.config.ts"]
+}

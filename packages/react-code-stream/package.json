@@ -1,16 +1,56 @@
 {
   "name": "react-code-stream",
   "version": "0.1.0",
-  "private": true,
+  "description": "A Shiki-powered React syntax highlighter for AI code streams.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/71203mayank/react-code-stream.git",
+    "directory": "packages/react-code-stream"
+  },
+  "keywords": ["react", "syntax-highlighting", "shiki", "streaming", "ai"],
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/react/StreamCode.css",
+    "./tokenizer": {
+      "types": "./dist/core/tokenizer.d.ts",
+      "import": "./dist/tokenizer.js"
+    },
+    "./incremental": {
+      "types": "./dist/core/incremental.d.ts",
+      "import": "./dist/incremental.js"
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "sideEffects": ["**/*.css"],
   "scripts": {
+    "build": "vite build && tsc -p tsconfig.build.json && node scripts/copy-package-docs.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "check": "npm run typecheck && npm test && npm run build && npm run check:package",
+    "check:package": "npm pack --dry-run",
+    "prepack": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
     "shiki": "^3.0.0"
   },
+  "peerDependencies": {
+    "react": "^19.2.0"
+  },
   "devDependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
     "jsdom": "^30.1.3",
     "vitest": "^5.0.5"
   }
