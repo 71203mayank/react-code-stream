@@ -67,6 +67,7 @@ function App() {
   return (
     <main className="playground">
       <header className="page-header">
+        <a href="/benchmark">Open highlighting benchmark →</a>
         <p className="eyebrow">Tokenizer playground</p>
         <h1>React Code Stream</h1>
         <p className="subtitle">

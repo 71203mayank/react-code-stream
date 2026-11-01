@@ -12,6 +12,8 @@
     "dev": "npm run dev --workspace=docs",
     "build": "npm run build --workspaces --if-present",
     "build:lib": "npm run build --workspace=react-code-stream",
-    "build:docs": "npm run build --workspace=docs"
+    "build:docs": "npm run build --workspace=docs",
+    "build:benchmark": "npm run build:lib && npm run build:docs",
+    "benchmark": "npm run preview --workspace=docs"
   }
 }

@@ -10,11 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "react-syntax-highlighter": "^16.1.0",
     "react-code-stream": "0.1.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@types/react-syntax-highlighter": "^15.5.13",
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
