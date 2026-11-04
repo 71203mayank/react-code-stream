@@ -24,3 +24,7 @@
 .benchmark-page li { margin-bottom: 10px; }
 .benchmark-page { text-align: left; border-radius: 10px; }
 .benchmark-page h1, .benchmark-page h2 { color: #d9e1ef; }
+.benchmark-page .typing-probe { margin: 24px 0; padding: 16px; border: 1px solid #394455; border-radius: 8px; }
+.benchmark-page .typing-probe h2 { margin-top: 0; }
+.benchmark-page #benchmark-typing { width: 100%; margin-top: 8px; }
+.benchmark-page #benchmark-typing[data-measuring="true"] { border-color: #5edb9a; outline-color: #5edb9a; }

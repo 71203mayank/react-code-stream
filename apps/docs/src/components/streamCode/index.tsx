@@ -10,6 +10,7 @@ const files = import.meta.glob<string>('../../testCorpus/*.txt', {
 
 const samples = [
   { file: 'sample.ts.txt', language: 'typescript' },
+  { file: 'sample-large.ts.txt', language: 'typescript' },
   { file: 'sample.js.txt', language: 'javascript' },
   { file: 'sample.go.txt', language: 'go' },
   { file: 'sample.cpp.txt', language: 'cpp' },

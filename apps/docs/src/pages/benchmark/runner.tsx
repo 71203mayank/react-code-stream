@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { CodeView } from './renderers'
 import type { Renderer } from './labels'
+import { measureTyping, type TypingResult } from './typing'
 
 export interface Settings {
   file: string
@@ -24,6 +25,7 @@ export interface Result {
   longTaskMs: number | null
   maxDeliveryDelayMs: number
   sourcePreserved: boolean
+  typing: TypingResult
 }
 
 export function percentile(values: number[], fraction: number): number {
@@ -41,7 +43,7 @@ function pause(ms: number, signal: AbortSignal): Promise<void> {
   })
 }
 
-async function trial(host: HTMLElement, settings: Settings, renderer: Renderer, repetition: number, signal: AbortSignal): Promise<Result> {
+async function trial(host: HTMLElement, input: HTMLInputElement, settings: Settings, renderer: Renderer, repetition: number, signal: AbortSignal): Promise<Result> {
   const root = createRoot(host)
   let renderError: Error | undefined
   const onError = (error: Error) => { renderError = error }
@@ -66,20 +68,28 @@ async function trial(host: HTMLElement, settings: Settings, renderer: Renderer, 
   let domObserver: MutationObserver | undefined
   let timeout: number | undefined
   let removeAbort = () => {}
+  let typing: ReturnType<typeof measureTyping> | undefined
   const longTasks: PerformanceEntry[] = []
   const gaps: number[] = []
   const longTasksSupported = typeof PerformanceObserver !== 'undefined' && PerformanceObserver.supportedEntryTypes.includes('longtask')
   const characters = Array.from(settings.source)
-  const updates = settings.mode === 'complete' ? [settings.source] : Array.from(
-    { length: Math.max(1, Math.ceil(characters.length / settings.chunkSize)) },
-    (_, index) => characters.slice(0, (index + 1) * settings.chunkSize).join(''),
-  )
+  // Store one source string and offsets rather than every accumulated prefix.
+  // This keeps the larger corpus from giving the harness quadratic memory use.
+  const ends: number[] = []
+  let offset = 0
+  for (let index = 0; index < characters.length; index++) {
+    offset += characters[index].length
+    if ((index + 1) % settings.chunkSize === 0 || index === characters.length - 1) ends.push(offset)
+  }
+  if (settings.mode === 'complete' || ends.length === 0) ends.splice(0, ends.length, settings.source.length)
   try {
     render(settings.source)
     await settle(settings.source)
     render('')
     await settle('')
     await pause(150, signal)
+    input.value = ''
+    input.focus({ preventScroll: true })
 
     if (longTasksSupported) {
       observer = new PerformanceObserver((list) => longTasks.push(...list.getEntries()))
@@ -97,6 +107,9 @@ async function trial(host: HTMLElement, settings: Settings, renderer: Renderer, 
     let finalSubmission = 0
     let maxDeliveryDelayMs = 0
     const started = performance.now()
+    typing = measureTyping(input, started)
+    input.dataset.measuring = 'true'
+    let startWatchdog = () => {}
     const complete = new Promise<number>((resolve, reject) => {
       const check = () => {
         if (renderError) { reject(renderError); return }
@@ -104,29 +117,37 @@ async function trial(host: HTMLElement, settings: Settings, renderer: Renderer, 
       }
       domObserver = new MutationObserver(check)
       domObserver.observe(host, { subtree: true, childList: true, characterData: true, attributes: true })
-      timeout = window.setTimeout(() => reject(new Error('Final highlighted output timed out')), 15000 + Array.from(settings.source).length / settings.chunkSize * settings.intervalMs)
       const abort = () => reject(signal.reason)
       signal.addEventListener('abort', abort, { once: true })
       removeAbort = () => signal.removeEventListener('abort', abort)
+      // Start the final-output watchdog after delivery, so slower streaming
+      // under load is measured rather than mistaken for a missing final render.
+      startWatchdog = () => {
+        timeout = window.setTimeout(() => reject(new Error('Final highlighted output timed out')), 15000)
+      }
     })
     // Attach a rejection handler immediately while delivery is still running.
     void complete.catch(() => {})
-    for (let index = 0; index < updates.length; index++) {
+    for (let index = 0; index < ends.length; index++) {
       const due = started + index * settings.intervalMs
       if (index > 0) await pause(Math.max(0, due - performance.now()), signal)
       signal.throwIfAborted()
       maxDeliveryDelayMs = Math.max(maxDeliveryDelayMs, performance.now() - due)
-      if (index === updates.length - 1) {
+      if (index === ends.length - 1) {
         finalSubmitted = true
         finalSubmission = performance.now()
+        startWatchdog()
       }
-      render(updates[index])
+      typing.progress(settings.source.length ? ends[index] / settings.source.length : 1)
+      render(settings.source.slice(0, ends[index]))
     }
     const finished = await complete
+    typing.end(finished)
+    input.dataset.measuring = 'false'
     cancelAnimationFrame(frame)
     domObserver?.disconnect()
     // Allow delivery of long-task entries, without including this wait in the result.
-    await pause(80, signal)
+    await pause(200, signal)
     longTasks.push(...(observer?.takeRecords() ?? []))
     const measuredTasks = longTasks.filter((task) => task.startTime >= started && task.startTime < finished)
     return {
@@ -139,6 +160,7 @@ async function trial(host: HTMLElement, settings: Settings, renderer: Renderer, 
       longTaskMs: longTasksSupported ? measuredTasks.reduce((sum, task) => sum + task.duration, 0) : null,
       maxDeliveryDelayMs,
       sourcePreserved: host.querySelector('code')?.textContent === settings.source,
+      typing: typing.result(),
     }
   } finally {
     clearTimeout(timeout)
@@ -146,11 +168,13 @@ async function trial(host: HTMLElement, settings: Settings, renderer: Renderer, 
     observer?.disconnect()
     domObserver?.disconnect()
     removeAbort()
+    typing?.dispose()
+    input.dataset.measuring = 'false'
     root.unmount()
   }
 }
 
-export async function runBenchmark(host: HTMLElement, settings: Settings, signal: AbortSignal, onTrial: (label: string) => void): Promise<Result[]> {
+export async function runBenchmark(host: HTMLElement, input: HTMLInputElement, settings: Settings, signal: AbortSignal, onTrial: (label: string) => void): Promise<Result[]> {
   const results: Result[] = []
   for (let repetition = 1; repetition <= settings.repetitions; repetition++) {
     const order: Renderer[] = settings.renderer === 'both'
@@ -161,7 +185,7 @@ export async function runBenchmark(host: HTMLElement, settings: Settings, signal
       onTrial(`${renderer} · repetition ${repetition}/${settings.repetitions} (includes warmup)`)
       // Let the UI update before warmup and measurement begin.
       await pause(100, signal)
-      results.push(await trial(host, settings, renderer, repetition, signal))
+      results.push(await trial(host, input, settings, renderer, repetition, signal))
     }
   }
   return results

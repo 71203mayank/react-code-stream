@@ -2,12 +2,14 @@ import * as React from 'react'
 import { rendererNames, type Renderer } from './labels'
 import { percentile, runBenchmark, type Result, type Settings } from './runner'
 import './style.css'
+import TypingResults from './TypingResults'
 
 const files = import.meta.glob<string>('../../testCorpus/*.txt', { query: '?raw', import: 'default', eager: true })
 const samples = [
   ['sample.ts.txt', 'typescript'], ['sample.js.txt', 'javascript'], ['sample.py.txt', 'python'],
   ['sample.cpp.txt', 'cpp'], ['sample.go.txt', 'go'], ['sample.html.txt', 'html'],
   ['sample.css.txt', 'css'], ['sample-text.txt', 'text'],
+  ['sample-large.ts.txt', 'typescript'],
 ]
 
 interface Report {
@@ -51,6 +53,7 @@ function Results({ report }: { report: Report }) {
         return runs.length ? <td key={renderer}>{(format as (runs: Result[]) => string)(runs)}</td> : null
       })}</tr>)}</tbody>
     </table></div>
+    <TypingResults results={report.results} />
     <button onClick={download}>Download raw results (JSON)</button>
   </section>
 }
@@ -66,6 +69,7 @@ export default function BenchmarkPage() {
   const [running, setRunning] = React.useState(false)
   const [report, setReport] = React.useState<Report | null>(null)
   const host = React.useRef<HTMLDivElement>(null)
+  const typingInput = React.useRef<HTMLInputElement>(null)
   const controller = React.useRef<AbortController | null>(null)
   const mounted = React.useRef(true)
 
@@ -83,7 +87,7 @@ export default function BenchmarkPage() {
   }, [])
 
   async function start() {
-    if (!host.current || running) return
+    if (!host.current || !typingInput.current || running) return
     const abort = new AbortController()
     controller.current = abort
     setRunning(true)
@@ -92,7 +96,7 @@ export default function BenchmarkPage() {
     const settings: Settings = { file, language, source: files[`../../testCorpus/${file}`], renderer, mode, chunkSize, intervalMs, repetitions }
     try {
       if (document.hidden) throw new Error('Keep the benchmark tab visible.')
-      const results = await runBenchmark(host.current, settings, abort.signal, (label) => {
+      const results = await runBenchmark(host.current, typingInput.current, settings, abort.signal, (label) => {
         if (mounted.current) setStatus(label)
       })
       if (mounted.current) {
@@ -140,6 +144,14 @@ export default function BenchmarkPage() {
     <p>{sourceLength.toLocaleString()} Unicode code points · {scheduledSeconds.toFixed(1)} seconds of scheduled delivery across all trials, plus warmup and rendering time.</p>
     <div className="actions"><button onClick={() => void start()} disabled={running}>Run benchmark</button><button onClick={() => controller.current?.abort(new Error('Cancelled by user'))} disabled={!running}>Cancel</button></div>
     <p role="status">{status}</p>
+    <section className="typing-probe" aria-labelledby="typing-title">
+      <h2 id="typing-title">Type while the code streams</h2>
+      <label htmlFor="benchmark-typing">Typing test input (green border = measurement active)</label>
+      <input id="benchmark-typing" ref={typingInput} type="text" autoComplete="off" spellCheck={false}
+        placeholder="Keep typing a sentence here throughout each streaming trial…" />
+      <p>The input clears and receives focus after each warmup. Type throughout the stream to cover early, middle, and late source sizes. Text and key values are not exported.</p>
+      <p>For the large file, try 500 characters / 80 ms and one repetition first (about 6 seconds per renderer). Manual typing is exploratory: use comparable typing for each renderer; a fixed real-keyboard automation schedule is needed for repeatable input comparisons.</p>
+    </section>
     <h2>Measured renderer</h2>
     <div ref={host} className="output" />
     {report && <Results report={report} />}
@@ -152,6 +164,7 @@ export default function BenchmarkPage() {
         <li>Keep this tab visible, close DevTools and other busy tabs, and use the same browser, viewport, and machine for comparisons. Auto-scroll is disabled.</li>
         <li>Each trial starts with a fresh component and an unmeasured full-file warmup. StreamCode uses 10 lines per block; PrismLight uses registered corpus languages. Engines and themes differ.</li>
         <li>p95 is calculated across repeated final-update measurements. Use more repetitions for a more useful distribution.</li>
+        <li>Typing results use trusted keydowns in the typing input during measurement only. JavaScript-dispatched keyboard events are excluded. Full-file runs may finish before you can type.</li>
       </ul>
     </section>
   </main>
