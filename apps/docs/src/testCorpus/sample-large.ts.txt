@@ -1,0 +1,1000 @@
+// Large TypeScript corpus: deterministic synthetic task processing modules.
+// Used to compare typing responsiveness as streamed source grows.
+
+export interface Task0 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 0: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask0(task: Task0, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task1 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 1: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask1(task: Task1, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task2 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 2: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask2(task: Task2, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task3 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 3: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask3(task: Task3, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task4 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 4: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask4(task: Task4, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task5 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 5: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask5(task: Task5, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task6 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 6: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask6(task: Task6, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task7 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 7: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask7(task: Task7, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task8 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 8: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask8(task: Task8, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task9 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 9: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask9(task: Task9, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task10 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 10: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask10(task: Task10, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task11 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 11: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask11(task: Task11, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task12 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 12: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask12(task: Task12, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task13 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 13: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask13(task: Task13, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task14 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 14: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask14(task: Task14, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task15 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 15: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask15(task: Task15, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task16 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 16: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask16(task: Task16, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task17 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 17: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask17(task: Task17, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task18 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 18: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask18(task: Task18, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task19 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 19: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask19(task: Task19, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task20 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 20: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask20(task: Task20, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task21 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 21: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask21(task: Task21, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task22 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 22: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask22(task: Task22, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task23 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 23: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask23(task: Task23, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task24 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 24: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask24(task: Task24, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task25 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 25: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask25(task: Task25, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task26 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 26: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask26(task: Task26, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task27 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 27: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask27(task: Task27, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task28 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 28: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask28(task: Task28, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task29 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 29: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask29(task: Task29, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task30 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 30: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask30(task: Task30, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task31 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 31: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask31(task: Task31, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task32 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 32: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask32(task: Task32, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task33 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 33: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask33(task: Task33, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task34 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 34: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask34(task: Task34, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task35 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 35: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask35(task: Task35, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task36 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 36: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask36(task: Task36, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task37 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 37: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask37(task: Task37, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task38 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 38: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask38(task: Task38, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task39 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 39: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask39(task: Task39, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task40 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 40: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask40(task: Task40, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task41 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 41: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask41(task: Task41, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task42 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 42: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask42(task: Task42, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task43 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 43: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask43(task: Task43, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task44 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 44: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask44(task: Task44, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task45 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 45: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask45(task: Task45, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task46 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 46: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask46(task: Task46, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task47 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 47: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask47(task: Task47, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task48 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 48: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask48(task: Task48, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task49 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 49: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask49(task: Task49, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task50 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 50: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask50(task: Task50, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task51 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 51: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask51(task: Task51, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task52 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 52: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask52(task: Task52, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task53 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 53: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask53(task: Task53, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+export interface Task54 {
+  id: string
+  title: string
+  priority: number
+  tags: readonly string[]
+}
+
+/* Module 54: normalize task metadata before scheduling.
+   Keep comments and template strings intact across stream boundaries. */
+export function scheduleTask54(task: Task54, now: number): string {
+  const title = task.title.trim().replace(/\s+/g, ' ')
+  const priority = Math.max(0, Math.min(10, task.priority))
+  const tags = task.tags.filter((tag) => tag.length > 0).join(', ')
+  if (!title) throw new Error('Task requires a title')
+  const metadata = { id: task.id, priority, scheduledAt: now }
+  return `${metadata.id}: ${title} (${tags}) @ ${metadata.scheduledAt}`
+}
+
+// End-of-corpus summary for the generated task modules.
+export const moduleCount = 55
+export function describeCorpus(): string {
+  const language = 'typescript'
+  return `${moduleCount} task modules in ${language}`
+}
+// End of sample.

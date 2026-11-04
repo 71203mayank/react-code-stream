@@ -88,3 +88,11 @@ export default defineConfig([
 ])
 
 ```
+
+## Typing responsiveness
+
+On `/benchmark`, choose `sample-large.ts.txt` (about 38 KB / 1,000 lines), streaming mode, 500-character chunks, 80 ms intervals, and one repetition to start. Type in the dedicated input throughout each trial while its border is green. Warmup input is excluded; the field clears and focuses when measurement starts.
+
+Results show trusted keydown counts and approximate dispatch-delay median/p95 for the early, middle, and late thirds of submitted source. Where supported, browser Event Timing also reports input delay and event-to-next-paint duration for exposed keydowns. Event Timing's 16 ms minimum duration threshold means fast events may be absent; no samples is not zero delay. Dispatch delay is timestamp-to-capture-handler time, not a pixel-paint measurement. These metrics are not INP.
+
+Raw timing samples and source progress are included in JSON exports; typed text and key values are not. Manual typing patterns differ between runs, so treat these measurements as exploratory. Controlled comparisons require a fixed real-keyboard automation schedule. The larger corpus is deterministic synthetic TypeScript, not a representative production workload.
