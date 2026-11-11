@@ -1,10 +1,25 @@
-# Time-budgeted highlighting
+# Block Highlighting with a Time Budget
 
 This is the proposed design, not an implemented feature yet. It builds on our
 [tokenizer](./tokenizer.md) and [block cache](./block-cache.md).
 
-The idea is: **highlight some blocks, take a break, then continue from where we
-stopped.** Small and large inputs use the same flow.
+The idea is: **highlight blocks in order, check elapsed time after each block,
+and pause only when the budget is reached and more work remains.** Small streaming
+updates and full code input use the same flow; no `streaming` prop selects a
+different algorithm.
+
+## Starting settings
+
+| Setting | Starting value | Meaning |
+| --- | --- | --- |
+| `linesPerBlock` | 10 | Number of complete lines in a cached block; configurable. |
+| `sliceBudgetMs` | 8 ms | Work budget for one processing round, called T below. |
+| `continuationDelayMs` | 8 ms | Requested pause before continuing unfinished work. |
+
+These are starting values to measure and tune, not measured performance guarantees.
+Keep the work budget and pause duration independent of the block size. A larger
+block can take longer to highlight, but increasing its time budget would also
+allow longer periods of blocking the browser.
 
 ## Split code into blocks
 
@@ -39,9 +54,10 @@ context forward.
 Keep the latest received source separately from highlighting progress. Receiving
 block 4 does not mean we have highlighted block 4.
 
-## Work for T milliseconds, then pause
+## Check the budget after each block
 
-For example, let `T = 20 ms`:
+A **round** is one run of the processing loop. It ends when we catch up or when
+we reach the budget with work still pending. For example, let `T = 8 ms`:
 
 1. Start a clock at the beginning of a processing round.
 2. Highlight the block at the cursor, including generating its HTML.
@@ -51,8 +67,13 @@ For example, let `T = 20 ms`:
 6. If more work remains and elapsed time is at least T, continue after a T-ms timer.
 7. Show the results from this round. If no work remains, wait for new code.
 
-Each round starts a fresh clock. Waiting time does not consume its budget.
-Use `performance.now()` to measure processing time.
+**There is no fixed “work T ms, wait T ms” cycle.** If a round finishes all work
+in 2 ms, it returns immediately without a forced pause. The next arriving chunk
+can schedule a new round, starting again at zero.
+
+Each continuation also starts a fresh clock; only the cursor carries forward.
+Waiting time and previous rounds do not consume the new round's budget. Use
+`performance.now()` to measure processing time from the round's start.
 
 ```mermaid
 flowchart TD
@@ -72,22 +93,34 @@ use the T-ms timer. Both run the same processing function, regardless of input s
 
 Internally, `sliceBudgetMs` means how long we work and `continuationDelayMs` means
 how long we pause. Initially both equal T. A “slice” simply means one round.
+“Time budgeting” describes the work limit; “time slicing” describes dividing
+unfinished work across these rounds. They are parts of the same approach.
+
+We highlight each supplied block fully before checking the clock. We cannot pause
+halfway through a Shiki call. The unfinished source block is allowed to contain
+fewer than 10 lines, but its entire call must finish too.
 
 ## New code arrives while we wait
 
 ```text
-T = 20 ms
+Old tail: 8 lines + new text: 24 lines = 32 lines
+Split: [B0: 10 lines] [B1: 10 lines] [B2: 10 lines] [B3: 2 lines]
+T = 8 ms; pause = 8 ms
 
-Round 1: B0 takes 8 ms + B1 takes 7 ms + B2 takes 9 ms = 24 ms.
-         Stop after B2. Cursor = 3. Set a timer for 20 ms.
+Round 1: B0 takes 4 ms + B1 takes 5 ms = 9 ms.
+         Show B0 and B1. Cursor = 2. Set a timer for 8 ms.
 
-Waiting: B3 grows. B4, B5, and B6 arrive.
-         Store the latest source. Keep the same timer.
+Waiting: More text arrives and extends the pending source.
+         Keep the same timer; do not start a second processing loop.
 
-Round 2: Timer fires. Start a fresh clock.
-         B3 takes 12 ms + B4 takes 10 ms = 22 ms.
-         Stop after B4. Cursor = 5. Set another timer for 20 ms.
+Round 2: Timer fires. Start a fresh clock at zero.
+         Highlight B2 using B1's saved grammar state.
+         If below budget, continue with B3, including text added while waiting.
+         If caught up, show results and stop without a forced pause.
 ```
+
+If B2 alone exhausts the second round's budget and B3 still needs work, show B2
+and schedule another round for B3. No partially executed block is rendered.
 
 **Do not restart the timer whenever text arrives.** Otherwise, a continuous stream
 could keep postponing highlighting. Keep at most one waiting timer.
@@ -101,8 +134,10 @@ flowchart TD
     D -->|No| F["Schedule first round if work remains"]
 ```
 
-Normal browser events arrive between synchronous rounds, not in the middle of
-highlighting a block. If an update callback sends new source during a round,
+The browser may receive network data while highlighting runs, but our chunk
+handler runs on the same main thread and must wait until we return control.
+During the pause it can update the pending source. The timer resumes processing
+even if no new text arrives. If an update callback sends new source during a round,
 queue that update until a safe point instead of changing the active block list.
 
 ## The unfinished block needs special care
@@ -126,15 +161,22 @@ beginning. After B2, continue with B3.
 Keep the block's ID as it grows and becomes complete, so React recognizes it as
 the same block. Reuse unchanged completed blocks and their results.
 
+Small chunks can therefore keep a smooth streaming flow: highlight the growing
+tail, show it, and wait for more text. Once it has 10 complete lines, cache it and
+start a new tail. **Ten lines is a caching boundary, not a display threshold.**
+
 ## What the user sees
 
-Show highlighted results after each round. Show pending blocks as plain text,
-so code appears immediately even if highlighting is behind. Render that text
-safely through React text content or HTML escaping.
+Show newly highlighted results after each round, not after each processed block.
+For this version, do not add a separate plain-text preview of pending source.
+Keep the last published view until updated highlighted results are ready. For
+append-only updates, newly received text appears when highlighted; the existing
+highlighted tail can remain visible until its replacement is ready. Clear old
+results when resetting or replacing the source.
 
-If a block changes, show its current text while its new highlighting is pending;
-do not keep displaying an old version of the text. Update the view once per round
-instead of once per processed block.
+This preserves highlighted streaming while processing keeps up. If work falls
+behind, updates can appear in larger batches. Scheduling improves responsiveness,
+but does not guarantee perfectly smooth streaming under sustained load.
 
 When streaming ends, finish pending rounds, including the unfinished final block.
 When caught up, stop scheduling timers until source changes.
@@ -190,15 +232,17 @@ component owned it.
 - **T is a target, not a hard limit.** We check after a whole block, so one slow
   block can exceed T. Browser timers can also fire later than requested.
 - **Pausing helps responsiveness.** Reusing completed results saves repeated work.
-  Equal work and pause times do not guarantee a particular CPU percentage.
+  The budget limits continuous work in one round, not total CPU use across many
+  short rounds. Equal work and pause times do not guarantee a CPU percentage.
 - **Keep the latest source, not a job for every arrival.** If an unfinished block
   changes several times during a pause, highlight its latest version.
 - **Avoid scanning all old text on every append.** Split the old unfinished text
   plus new text. Keep complete source blocks, including those still pending.
 - **Rendering costs time too.** HTML generation happens during the round; browser
   layout and painting happen later and need separate measurement.
-- **Pending work can grow.** If input is faster than processing, keep showing
-  pending text and process blocks in order without dropping source.
+- **Pending work can grow.** One large chunk, frequent small chunks, or expensive
+  syntax can create a backlog. Keep pending source and process it in order without
+  dropping text; display it when its highlighting is ready.
 
 When implementing, check timer reuse, cursor movement, multiline comments across
 blocks, cleanup, failures, and the final unfinished block. Measure representative
