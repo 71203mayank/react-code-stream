@@ -1,17 +1,13 @@
 # React Code Stream playground
 
-The playground is available at `/`, with a separate benchmark page at `/benchmark`.
+Run `npm run build:lib` and `npm run dev` from the repository root to open the
+documentation playground at `/`.
 
-From the repository root, run a production benchmark with:
-
-```bash
-npm run build:benchmark
-npm run benchmark
-```
-
-Open `/benchmark` on the printed URL, or follow the link from the playground. For development, build the library with `npm run build:lib`, then run `npm run dev`.
-
-The benchmark compares StreamCode and react-syntax-highlighter using the existing corpus. It supports full-file and fixed-chunk streaming trials, warmups, alternating renderer order, repetition settings, cancellation, and JSON export. Results include final DOM latency, long tasks where supported, animation-frame gaps, input delivery delay, and final source preservation. These are page-level observations, not exact component CPU time or pixel paint measurements. Keep the tab visible and DevTools closed for measurements.
+Benchmarks live in the separate local-only `apps/benchmark` app. Run
+`npm run benchmark` and open `/streamcode` or `/time-budget` on its preview URL.
+See the [benchmark guide](../benchmark/docs/README.md) for workloads, methodology,
+metric definitions, and typing responsiveness testing. The shared corpus remains
+in this app's `src/testCorpus` directory.
 
 ## Vite template notes
 
@@ -88,11 +84,3 @@ export default defineConfig([
 ])
 
 ```
-
-## Typing responsiveness
-
-On `/benchmark`, choose `sample-large.ts.txt` (about 38 KB / 1,000 lines), streaming mode, 500-character chunks, 80 ms intervals, and one repetition to start. Type in the dedicated input throughout each trial while its border is green. Warmup input is excluded; the field clears and focuses when measurement starts.
-
-Results show trusted keydown counts and approximate dispatch-delay median/p95 for the early, middle, and late thirds of submitted source. Where supported, browser Event Timing also reports input delay and event-to-next-paint duration for exposed keydowns. Event Timing's 16 ms minimum duration threshold means fast events may be absent; no samples is not zero delay. Dispatch delay is timestamp-to-capture-handler time, not a pixel-paint measurement. These metrics are not INP.
-
-Raw timing samples and source progress are included in JSON exports; typed text and key values are not. Manual typing patterns differ between runs, so treat these measurements as exploratory. Controlled comparisons require a fixed real-keyboard automation schedule. The larger corpus is deterministic synthetic TypeScript, not a representative production workload.

@@ -1,6 +1,13 @@
-import type { CachedBlock } from './incremental';
 import type { GrammarStateCodeTokenizer } from './tokenizer';
 import type { GrammarState } from 'shiki'
+
+/** Highlighted block owned by the time-budget implementation. */
+export interface CachedBlock {
+    id: number;
+    source: string;
+    html: string;
+    outgoingGrammarState: GrammarState | undefined;
+}
 
 /** Received source, independent of highlighting progress. */
 export interface SourceBlock {

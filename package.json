@@ -13,7 +13,7 @@
     "build": "npm run build --workspaces --if-present",
     "build:lib": "npm run build --workspace=react-code-stream",
     "build:docs": "npm run build --workspace=docs",
-    "build:benchmark": "npm run build:lib && npm run build:docs",
-    "benchmark": "npm run preview --workspace=docs"
+    "build:benchmark": "npm run build:lib && npm run build --workspace=benchmark",
+    "benchmark": "npm run build:benchmark && npm run preview --workspace=benchmark -- --host 127.0.0.1"
   }
 }

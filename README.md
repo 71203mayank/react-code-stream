@@ -113,7 +113,7 @@ The archive includes the built files, README, and license. Tests stay in the rep
 | Directory | Purpose |
 | --- | --- |
 | [`packages/react-code-stream`](packages/react-code-stream) | The React component, Shiki tokenizer, incremental block cache, and tests. |
-| [`apps/docs`](apps/docs) | The local playground, sample code files, and `/benchmark` route comparing StreamCode with react-syntax-highlighter. |
+| [`apps/docs`](apps/docs) | The documentation playground and shared sample code files. |
 | [`docs`](docs) | Project notes explaining the design, tokenizer, and block cache. |
 
 Start with the [project overview](docs/project-overview.md) and [architecture](docs/architecture.md) for more detail.
@@ -121,3 +121,5 @@ Start with the [project overview](docs/project-overview.md) and [architecture](d
 ## License
 
 [MIT](LICENSE).
+
+The local-only [benchmark app](apps/benchmark/docs/README.md) compares both client components with PrismLight. Run `npm run benchmark`, then open `/streamcode` or `/time-budget`.

@@ -63,10 +63,10 @@ describe('StreamCode', () => {
     })
   }
 
-  it('shows escaped source during initialization and renders one shared pre/code pair', async () => {
+  it('stays empty during initialization and renders one shared pre/code pair', async () => {
     const source = '<script>alert("hello")</script>\n'
     await render(source)
-    expect(host.textContent).toBe(source)
+    expect(host.textContent).toBe('')
     expect(host.querySelector('script')).toBeNull()
     await flushFrame()
     expect(host.textContent).toBe(source)
@@ -134,18 +134,18 @@ describe('StreamCode', () => {
     expect(host.textContent).toBe('hello')
   })
 
-  it('reports initialization errors and continues displaying escaped source', async () => {
+  it('reports initialization errors and keeps the code view empty', async () => {
     const error = new Error('Could not load grammar')
     initialize.mockRejectedValueOnce(error)
     const onError = vi.fn()
     await render('<tag>', { onError })
     expect(onError).toHaveBeenCalledWith(error)
     await render('<tag>more', { onError })
-    expect(host.textContent).toBe('<tag>more')
+    expect(host.textContent).toBe('')
     expect(host.querySelector('tag')).toBeNull()
   })
 
-  it('falls back to plain text after highlighting fails and stops retrying', async () => {
+  it('clears the code view after highlighting fails and stops retrying', async () => {
     const onError = vi.fn()
     await render('first', { onError })
     await flushFrame()
@@ -153,13 +153,13 @@ describe('StreamCode', () => {
     await render('<broken>', { onError })
     await flushFrame()
     expect(onError).toHaveBeenCalledWith(expect.objectContaining({ message: 'Highlight failed' }))
-    expect(host.textContent).toBe('<broken>')
+    expect(host.textContent).toBe('')
     expect(host.querySelector('[data-block-id]')).toBeNull()
     const calls = highlight.mock.calls.length
     await render('new source', { onError })
     await flushFrame()
     expect(highlight).toHaveBeenCalledTimes(calls)
-    expect(host.textContent).toBe('new source')
+    expect(host.textContent).toBe('')
   })
 
   it('rejects an invalid block size without initializing Shiki', async () => {
@@ -167,7 +167,7 @@ describe('StreamCode', () => {
     await render('source', { linesPerBlock: 0, onError })
     expect(onError).toHaveBeenCalledWith(expect.any(RangeError))
     expect(initialize).not.toHaveBeenCalled()
-    expect(host.textContent).toBe('source')
+    expect(host.textContent).toBe('')
   })
 
   it('cancels queued highlighting and disposes the tokenizer on unmount', async () => {
