@@ -4,23 +4,28 @@ import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { TimeBudgetStreamCode } from "../src/react/TimeBudgetStreamCode";
 
-const { highlight, dispose, initialize } = vi.hoisted(() => ({
+const { highlight, dispose, initialize, getShared } = vi.hoisted(() => ({
   highlight: vi.fn((source: string) => ({
     html: `<pre><code>${source.replaceAll("<", "&lt;")}</code></pre>`,
     currentGrammarState: undefined,
   })),
   dispose: vi.fn(),
   initialize: vi.fn(),
+  getShared: vi.fn(),
 }));
 
-vi.mock("../src/core/tokenizer", () => ({
-  DEFAULT_THEME: "github-dark",
-  FALLBACK_LANGUAGE: "text",
-  createGrammarStateCodeTokenizer: initialize,
+// Manager behavior is tested separately; these tests exercise session ownership.
+vi.mock("../src/core/sharedHighlighterManager", () => ({
+  getSharedTimeBudgetTokenizer: getShared,
 }));
 
 beforeEach(() => {
+  let pending: Promise<{ highlight: typeof highlight }> | undefined;
   initialize.mockImplementation(async () => ({ highlight, dispose }));
+  getShared.mockImplementation(() => {
+    pending ??= initialize().then(() => ({ highlight }));
+    return pending;
+  });
 });
 
 afterEach(() => {

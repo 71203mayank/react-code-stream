@@ -71,7 +71,7 @@ export async function createCodeTokenizer(
 
 /** Highlights consecutive code blocks while preserving grammar context between blocks. */
 export interface GrammarStateCodeTokenizer{
-  /** Release resources when this tokenizer is no longer needed. */
+  /** Present only for owning tokenizers; borrowed wrappers must not dispose Shiki. */
   dispose?(): void
   /**
    * Highlight a code block and return its outgoing grammar state.
@@ -90,7 +90,42 @@ export interface GrammarStateCodeTokenizer{
 }
 
 /**
- * Create a reusable tokenizer for highlighting consecutive code blocks.
+ * Borrow an existing highlighter without owning its lifetime.
+ * The requested theme and languages must already be loaded.
+ * This wrapper captures a theme, not mutable stream state: callers supply their
+ * own preceding grammar state on each call and retain the returned next state.
+ * No dispose method is exposed because the highlighter owner controls its lifetime.
+ */
+export function createGrammarStateTokenizerFromHighlighter(
+  highlighter: Highlighter,
+  theme: string,
+): Pick<GrammarStateCodeTokenizer, 'highlight'> {
+  return {
+    highlight(code, language = FALLBACK_LANGUAGE, lastGrammarState) {
+      // Read current languages because the shared highlighter can load more later.
+      const resolvedLanguage = highlighter
+        .getLoadedLanguages()
+        .includes(language as BundledLanguage)
+        ? (language as BundledLanguage)
+        : FALLBACK_LANGUAGE
+
+      const highlightedTree = highlighter.codeToHast(code, {
+        lang: resolvedLanguage,
+        theme,
+        grammarState: lastGrammarState,
+      })
+
+      return {
+        html: hastToHtml(highlightedTree),
+        currentGrammarState: highlighter.getLastGrammarState(highlightedTree),
+      }
+    }
+  }
+}
+
+/**
+ * Create an independently owned tokenizer for highlighting consecutive code blocks.
+ * The caller must dispose it when finished; shared users should use the borrowing helper.
  * Initialization loads the configured languages and theme asynchronously.
  * Subsequent highlight calls are synchronous and derive HTML and the outgoing
  * grammar state from a single tokenization pass.
@@ -107,27 +142,16 @@ export async function createGrammarStateCodeTokenizer(
       forgiving: true,
     }),
   })
-  const loadedLanguages = new Set(highlighter.getLoadedLanguages())
+
+  const tokenizer = createGrammarStateTokenizerFromHighlighter(
+    highlighter,
+    theme,
+  )
 
   return {
+    ...tokenizer,
     dispose() {
       highlighter.dispose()
     },
-    highlight(code, language = FALLBACK_LANGUAGE, lastGrammarState) {
-      const resolvedLanguage = loadedLanguages.has(language)
-        ? language as BundledLanguage
-        : FALLBACK_LANGUAGE
-      
-      const highlightedTree = highlighter.codeToHast(code, {
-        lang: resolvedLanguage,
-        theme,
-        grammarState: lastGrammarState,
-      })
-
-      const html = hastToHtml(highlightedTree)
-      const currentGrammarState = highlighter.getLastGrammarState(highlightedTree)
-
-      return {html, currentGrammarState}
-    }
   }
 }
