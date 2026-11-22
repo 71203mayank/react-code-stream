@@ -17,11 +17,11 @@ import {
   type TimeBudgetIncrementalTokenizer,
 } from "../core/timeBudgetIncremental";
 import {
-  createGrammarStateCodeTokenizer,
   DEFAULT_THEME,
   FALLBACK_LANGUAGE,
 } from "../core/tokenizer";
 import "./StreamCode.css";
+import { getSharedTimeBudgetTokenizer } from "../core/sharedHighlighterManager";
 
 /** Public configuration for a continuous, incrementally highlighted code view. */
 export interface TimeBudgetStreamCodeProps {
@@ -33,7 +33,7 @@ export interface TimeBudgetStreamCodeProps {
   children: string;
   /** Shiki language or alias. Unknown languages use plain text. Defaults to text. */
   language?: string;
-  /** Shiki theme. Changing it initializes a new tokenizer and cache. */
+  /** Shiki theme. Changing it resets the cache and requests a shared tokenizer. */
   theme?: string;
   /** Complete lines per block; a positive safe integer, defaulting to 10. */
   linesPerBlock?: number;
@@ -165,8 +165,8 @@ const TimeBudgetStreamCodeSession = memo(function TimeBudgetStreamCodeSession({
 
   /**
    * Initialize one tokenizer and cache, then process the latest source received while loading.
-   * Cleanup cancels frames, disposes the scheduler, and releases the highlighter. Late async results
-   * are disposed without updating the component, including during Strict Mode effect replay.
+   * Cleanup cancels frames and disposes this session’s scheduler. The shared tokenizer
+   * stays cached; late async results never attach to an inactive session.
    */
   useEffect(() => {
     let active = true;
@@ -179,20 +179,30 @@ const TimeBudgetStreamCodeSession = memo(function TimeBudgetStreamCodeSession({
         if (!Number.isSafeInteger(linesPerBlock) || linesPerBlock <= 0) {
           throw new RangeError("linesPerBlock must be a positive safe integer");
         }
-        const tokenizer = await createGrammarStateCodeTokenizer({
-          languages: Object.prototype.hasOwnProperty.call(
-            bundledLanguages,
-            language,
-          )
-            ? [language as BundledLanguage]
-            : [],
+
+        // UNSHARED INITIALIZATION
+        // const tokenizer = await createGrammarStateCodeTokenizer({
+        //   languages: Object.prototype.hasOwnProperty.call(
+        //     bundledLanguages,
+        //     language,
+        //   )
+        //     ? [language as BundledLanguage]
+        //     : [],
+        //   theme,
+        // });
+
+        // SHARED INITIALIZATION
+        const tokenizer = await getSharedTimeBudgetTokenizer(
+          Object.prototype.hasOwnProperty.call(bundledLanguages, language)
+          ? (language as BundledLanguage)
+          : undefined,
           theme,
-        });
+        );
+
         if (!active) {
-          tokenizer.dispose?.();
           return;
         }
-        dispose = () => tokenizer.dispose?.();
+
         const scheduler = createIncrementalTokenizer({
           tokenizer,
           language,
@@ -209,10 +219,9 @@ const TimeBudgetStreamCodeSession = memo(function TimeBudgetStreamCodeSession({
             reportError(error);
           },
         });
-        // Stop pending rounds before releasing the tokenizer they borrow.
+        // Stop this session’s pending rounds; the shared tokenizer stays cached.
         dispose = () => {
           scheduler.dispose();
-          tokenizer.dispose?.();
         };
         cacheRef.current = scheduler;
         scheduleUpdate();

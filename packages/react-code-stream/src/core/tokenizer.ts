@@ -5,6 +5,7 @@ import {
   type GrammarState,
   type SpecialLanguage,
   hastToHtml,
+  createJavaScriptRegexEngine,
 } from 'shiki'
 
 /** Languages enabled in the first tokenizer spike. */
@@ -47,6 +48,9 @@ export async function createCodeTokenizer(
   const highlighter: Highlighter = await createHighlighter({
     langs: [...languages],
     themes: [theme],
+    engine: createJavaScriptRegexEngine({
+      forgiving: true,
+    }),
   })
   const loadedLanguages = new Set(highlighter.getLoadedLanguages())
 
@@ -99,6 +103,9 @@ export async function createGrammarStateCodeTokenizer(
   const highlighter: Highlighter = await createHighlighter({
     langs: [...languages],
     themes: [theme],
+    engine: createJavaScriptRegexEngine({
+      forgiving: true,
+    }),
   })
   const loadedLanguages = new Set(highlighter.getLoadedLanguages())
 

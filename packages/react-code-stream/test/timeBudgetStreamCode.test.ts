@@ -1,22 +1,27 @@
 // @vitest-environment jsdom
 import { act, createElement, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { afterEach, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { TimeBudgetStreamCode } from "../src/react/TimeBudgetStreamCode";
 
-const { highlight, dispose } = vi.hoisted(() => ({
+const { highlight, dispose, initialize } = vi.hoisted(() => ({
   highlight: vi.fn((source: string) => ({
     html: `<pre><code>${source.replaceAll("<", "&lt;")}</code></pre>`,
     currentGrammarState: undefined,
   })),
   dispose: vi.fn(),
+  initialize: vi.fn(),
 }));
 
 vi.mock("../src/core/tokenizer", () => ({
   DEFAULT_THEME: "github-dark",
   FALLBACK_LANGUAGE: "text",
-  createGrammarStateCodeTokenizer: vi.fn(async () => ({ highlight, dispose })),
+  createGrammarStateCodeTokenizer: initialize,
 }));
+
+beforeEach(() => {
+  initialize.mockImplementation(async () => ({ highlight, dispose }));
+});
 
 afterEach(() => {
   vi.useRealTimers();
@@ -70,7 +75,7 @@ it("finishes queued blocks, preserves replacements, and cancels work on unmount"
       await vi.runAllTimersAsync();
     });
     expect(highlight).toHaveBeenCalledTimes(calls);
-    expect(dispose).toHaveBeenCalledTimes(1);
+    expect(dispose).not.toHaveBeenCalled();
     expect(vi.getTimerCount()).toBe(0);
   } finally {
     // root.unmount is idempotent, including after a failed assertion.
@@ -96,6 +101,7 @@ it("releases independent scheduler sessions on configuration changes and Strict 
             children: "first\nsecond\ntail",
             linesPerBlock: 1,
             sliceBudgetMs,
+            theme: "github-light",
           }),
         ),
       );
@@ -105,15 +111,73 @@ it("releases independent scheduler sessions on configuration changes and Strict 
 
   try {
     await render(8);
-    expect(dispose).toHaveBeenCalledTimes(1);
+    expect(initialize).toHaveBeenCalledTimes(1);
+    expect(dispose).not.toHaveBeenCalled();
     expect(host.querySelector("code")?.textContent).toBe("first\nsecond\ntail");
     await render(4);
+    expect(initialize).toHaveBeenCalledTimes(1);
     // Changing the budget remounts the session; Strict Mode replays its effects.
-    expect(dispose).toHaveBeenCalledTimes(3);
+    expect(dispose).not.toHaveBeenCalled();
     expect(host.querySelector("code")?.textContent).toBe("first\nsecond\ntail");
   } finally {
     await act(async () => root.unmount());
   }
-  expect(dispose).toHaveBeenCalledTimes(4);
+  expect(dispose).not.toHaveBeenCalled();
+  expect(vi.getTimerCount()).toBe(0);
+});
+
+
+it("shares pending initialization and keeps surviving streams independent", async () => {
+  vi.useFakeTimers();
+  vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+  vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) =>
+    setTimeout(() => callback(performance.now()), 16),
+  );
+  vi.stubGlobal("cancelAnimationFrame", clearTimeout);
+  let resolve!: (value: { highlight: typeof highlight; dispose: typeof dispose }) => void;
+  initialize.mockImplementationOnce(() => new Promise((done) => { resolve = done; }));
+  const hosts = [document.createElement("div"), document.createElement("div")];
+  const roots = hosts.map((host) => createRoot(host));
+  const onError = vi.fn();
+  const renderStream = (index: number, source: string) =>
+    roots[index].render(createElement(TimeBudgetStreamCode, {
+      children: source, language: "typescript", theme: "nord", linesPerBlock: 1, onError,
+    }));
+
+  try {
+    await act(async () => {
+      renderStream(0, "A first\nA tail");
+      renderStream(1, "B first\nB tail");
+    });
+    expect(initialize).toHaveBeenCalledTimes(1);
+    expect(highlight).not.toHaveBeenCalled();
+    // A disappears while both components are awaiting the same promise.
+    await act(async () => roots[0].unmount());
+    await act(async () => { resolve({ highlight, dispose }); });
+    await act(async () => { await vi.runAllTimersAsync(); });
+    expect(hosts[0].textContent).toBe("");
+    expect(hosts[1].querySelector("code")?.textContent).toBe("B first\nB tail");
+    expect(highlight.mock.calls.every(([source]) => source.startsWith("B"))).toBe(true);
+    expect(dispose).not.toHaveBeenCalled();
+
+    // Remount A from the completed cache, then remove it with an update pending.
+    roots[0] = createRoot(hosts[0]);
+    await act(async () => { renderStream(0, "A remount"); });
+    await act(async () => { await vi.runAllTimersAsync(); });
+    expect(hosts[0].querySelector("code")?.textContent).toBe("A remount");
+    await act(async () => { renderStream(0, "A pending"); });
+    const callsBeforeUnmount = highlight.mock.calls.length;
+    await act(async () => roots[0].unmount());
+    await act(async () => { await vi.runAllTimersAsync(); });
+    expect(highlight).toHaveBeenCalledTimes(callsBeforeUnmount);
+    await act(async () => { renderStream(1, "B first\nB tail grows"); });
+    await act(async () => { await vi.runAllTimersAsync(); });
+    expect(hosts[1].querySelector("code")?.textContent).toBe("B first\nB tail grows");
+    expect(initialize).toHaveBeenCalledTimes(1);
+    expect(onError).not.toHaveBeenCalled();
+  } finally {
+    await act(async () => { roots.forEach((root) => root.unmount()); });
+  }
+  expect(dispose).not.toHaveBeenCalled();
   expect(vi.getTimerCount()).toBe(0);
 });
