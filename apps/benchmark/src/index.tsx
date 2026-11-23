@@ -1,4 +1,6 @@
 import * as React from "react";
+import { prewarmCodeStream } from "react-code-stream";
+import { BENCHMARK_THEME } from "./renderers";
 import { namesForVariant, type Renderer } from "./labels";
 import { percentile, runBenchmark, type Result, type Settings } from "./runner";
 import "./style.css";
@@ -183,6 +185,7 @@ export default function BenchmarkPage({
   variant?: "streamcode" | "time-budget";
 }) {
   const rendererNames = namesForVariant(variant);
+  const [prewarm, setPrewarm] = React.useState({ ready: false, message: "Loading highlighting resources…" });
   const [warmup, setWarmup] = React.useState(true);
   const [file, setFile] = React.useState(samples[0][0]);
   const [renderer, setRenderer] = React.useState<Renderer | "both">("both");
@@ -216,8 +219,33 @@ export default function BenchmarkPage({
     };
   }, []);
 
+  // Start resource loading when the time-budget page mounts, before a run begins.
+  React.useEffect(() => {
+    if (variant !== "time-budget") return;
+    let active = true;
+    const startedAt = performance.now();
+    setPrewarm({ ready: false, message: "Loading highlighting resources…" });
+    void prewarmCodeStream({
+      themes: [BENCHMARK_THEME],
+      languages: ["typescript", "python", "go", "cpp"],
+    }).then(() => {
+      if (active) setPrewarm({
+        ready: true,
+        message: `Prewarm ready in ${(performance.now() - startedAt).toFixed(0)} ms: ${BENCHMARK_THEME}; TypeScript, Python, Go, C++.`,
+      });
+    }).catch((error: unknown) => {
+      if (active) setPrewarm({
+        ready: false,
+        message: `Prewarm failed: ${error instanceof Error ? error.message : String(error)}`,
+      });
+    });
+
+    // Loading belongs to the shared manager and continues after this page unmounts.
+    return () => { active = false; };
+  }, [variant]);
+
   async function start() {
-    if (!host.current || !typingInput.current || running) return;
+    if (!host.current || !typingInput.current || running || (variant === "time-budget" && !prewarm.ready)) return;
     const abort = new AbortController();
     controller.current = abort;
     setRunning(true);
@@ -311,6 +339,12 @@ export default function BenchmarkPage({
       {!import.meta.env.PROD && (
         <p className="notice">
           Development build: use the production preview for reportable results.
+        </p>
+      )}
+      {variant === "time-budget" && (
+        <p role="status">
+          {prewarm.message} Resource prewarming is separate from full-file warmup;
+          JavaScript, HTML, CSS, and other languages load on demand.
         </p>
       )}
       <fieldset disabled={running}>
@@ -416,7 +450,7 @@ export default function BenchmarkPage({
         trials, plus warmup and rendering time.
       </p>
       <div className="actions">
-        <button onClick={() => void start()} disabled={running}>
+        <button onClick={() => void start()} disabled={running || (variant === "time-budget" && !prewarm.ready)}>
           Run benchmark
         </button>
         <button

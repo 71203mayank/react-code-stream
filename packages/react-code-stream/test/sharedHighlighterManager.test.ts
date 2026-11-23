@@ -136,3 +136,87 @@ it.each(["language", "theme"] as const)("retries a failed %s load without recrea
   expect(initialize).toHaveBeenCalledTimes(1);
   expect(highlighter.dispose).not.toHaveBeenCalled();
 });
+
+it("prewarms selected resources and reuses them for subsequent stream requests", async () => {
+  const { prewarmCodeStream: prewarm, getSharedTimeBudgetTokenizer: get } =
+    await import("../src/core/sharedHighlighterManager");
+  const options = {
+    languages: ["typescript", "python", "go", "cpp"],
+    themes: ["github-dark"],
+  } as const;
+  await Promise.all([prewarm(options), prewarm(options)]);
+  await prewarm(options);
+  for (const language of options.languages) await get(language, "github-dark");
+  expect(initialize).toHaveBeenCalledTimes(1);
+  expect(highlighter.loadLanguage.mock.calls).toEqual([
+    ["typescript"], ["python"], ["go"], ["cpp"],
+  ]);
+  expect(highlighter.loadTheme).toHaveBeenCalledExactlyOnceWith("github-dark");
+  expect(highlighter.dispose).not.toHaveBeenCalled();
+});
+
+it("shares in-flight prewarming with a stream and waits for all resources", async () => {
+  const language = deferred<void>();
+  const theme = deferred<void>();
+  highlighter.loadLanguage.mockReturnValueOnce(language.promise);
+  highlighter.loadTheme.mockReturnValueOnce(theme.promise);
+  const { prewarmCodeStream: prewarm, getSharedTimeBudgetTokenizer: get } =
+    await import("../src/core/sharedHighlighterManager");
+  const warming = prewarm({ languages: ["typescript"], themes: ["github-dark"] });
+  const stream = get("typescript", "github-dark");
+  let ready = false;
+  void warming.then(() => { ready = true; });
+  await vi.waitFor(() => {
+    expect(highlighter.loadLanguage).toHaveBeenCalledTimes(1);
+    expect(highlighter.loadTheme).toHaveBeenCalledTimes(1);
+  });
+  expect(ready).toBe(false);
+  language.resolve();
+  await Promise.resolve();
+  expect(ready).toBe(false);
+  theme.resolve();
+  await expect(warming).resolves.toBeUndefined();
+  await expect(stream).resolves.toHaveProperty("highlight");
+  expect(initialize).toHaveBeenCalledTimes(1);
+  expect(highlighter.loadLanguage).toHaveBeenCalledTimes(1);
+  expect(highlighter.loadTheme).toHaveBeenCalledTimes(1);
+});
+
+it("supports engine-only prewarming and independently optional resource arrays", async () => {
+  const { prewarmCodeStream: prewarm } = await import("../src/core/sharedHighlighterManager");
+  await prewarm();
+  await prewarm({});
+  expect(initialize).toHaveBeenCalledTimes(1);
+  expect(highlighter.loadLanguage).not.toHaveBeenCalled();
+  expect(highlighter.loadTheme).not.toHaveBeenCalled();
+  await prewarm({ languages: ["python"] });
+  expect(highlighter.loadTheme).not.toHaveBeenCalled();
+  await prewarm({ themes: ["github-dark", "github-light"] });
+  expect(highlighter.loadLanguage).toHaveBeenCalledExactlyOnceWith("python");
+  expect(highlighter.loadTheme.mock.calls).toEqual([["github-dark"], ["github-light"]]);
+});
+
+it("propagates prewarm initialization failures and allows retry", async () => {
+  const error = new Error("Engine failed");
+  initialize.mockRejectedValueOnce(error);
+  const { prewarmCodeStream: prewarm } = await import("../src/core/sharedHighlighterManager");
+  await expect(prewarm()).rejects.toBe(error);
+  await expect(prewarm()).resolves.toBeUndefined();
+  expect(initialize).toHaveBeenCalledTimes(2);
+});
+
+it.each(["language", "theme"] as const)("retries failed prewarm %s loads on the same highlighter", async (resource) => {
+  const error = new Error("Prewarm resource failed");
+  const load = resource === "language" ? highlighter.loadLanguage : highlighter.loadTheme;
+  load.mockRejectedValueOnce(error);
+  const { prewarmCodeStream: prewarm, getSharedTimeBudgetTokenizer: get } =
+    await import("../src/core/sharedHighlighterManager");
+  const options = { languages: ["typescript"], themes: ["github-dark"] } as const;
+  await expect(prewarm(options)).rejects.toBe(error);
+  await expect(prewarm(options)).resolves.toBeUndefined();
+  await get("typescript", "github-dark");
+  expect(initialize).toHaveBeenCalledTimes(1);
+  expect(load).toHaveBeenCalledTimes(2);
+  const otherLoad = resource === "language" ? highlighter.loadTheme : highlighter.loadLanguage;
+  expect(otherLoad).toHaveBeenCalledTimes(1);
+});

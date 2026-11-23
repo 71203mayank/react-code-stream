@@ -23,6 +23,8 @@ for (const [name, grammar] of Object.entries({
   PrismLight.registerLanguage(name, grammar);
 }
 
+export const BENCHMARK_THEME = "github-dark";
+
 export function CodeView({
   variant,
   renderer,
@@ -41,7 +43,7 @@ export function CodeView({
   return renderer === "streamcode" ? (
     <Component
       language={language}
-      theme="github-dark"
+      theme={BENCHMARK_THEME}
       linesPerBlock={10}
       autoScroll={false}
       className="benchmark-code"

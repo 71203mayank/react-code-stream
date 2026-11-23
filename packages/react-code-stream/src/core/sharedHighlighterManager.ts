@@ -131,6 +131,32 @@ export async function getSharedTimeBudgetTokenizer(
 }
 
 
+/** prewarmnig react code stream */
+export interface PrewarmCodeStreamOptions {
+    languages?: readonly BundledLanguage[];
+    themes?: readonly BundledTheme[];
+}
+
+/**
+ * Initialize the shared time-budget highlighter and load selected resources.
+ * Resolves when all requested resources are ready; rejects on loading failure.
+ */
+export async function prewarmCodeStream(
+    options: PrewarmCodeStreamOptions = {},
+): Promise<void> {
+    const highlighter = await getHighlighter();
+
+    await Promise.all([
+        ...(options.languages ?? []).map((language) => 
+            ensureLanguage(highlighter, language),
+        ),
+        ...(options.themes ?? []).map((theme) =>
+            ensureTheme(highlighter, theme),
+        ),
+    ]);
+}
+
+
 
 
 // const tokenizers = new Map<string, Promise<SharedTokenizer>>();
