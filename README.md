@@ -14,7 +14,7 @@ React Code Stream uses [Shiki](https://shiki.style/) for syntax highlighting and
 - Cached, memoized blocks that keep completed content unchanged during append-only updates.
 - Animation-frame scheduling to combine rapid incoming updates.
 - Optional auto-scroll that pauses when the reader scrolls away from the bottom.
-- Plain-text fallback when highlighting fails.
+- Plain-text fallback for unknown languages; highlighting errors are reported through `onError`.
 
 ## Local setup
 
@@ -76,7 +76,6 @@ The package provides ESM output and TypeScript declarations, and currently targe
 <StreamCode
   key={fileID}
   language="typescript"
-  linesPerBlock={10}
   autoScroll
   style={{ maxHeight: 430 }}
 >
@@ -122,4 +121,4 @@ Start with the [project overview](docs/project-overview.md) and [architecture](d
 
 [MIT](LICENSE).
 
-The local-only [benchmark app](apps/benchmark/docs/README.md) compares both client components with PrismLight. Run `npm run benchmark`, then open `/streamcode` or `/time-budget`.
+The local-only [benchmark app](apps/benchmark/docs/README.md) compares both client components with PrismLight. Run `npm run benchmark`, then open `/time-budget`.

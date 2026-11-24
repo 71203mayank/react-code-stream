@@ -12,7 +12,7 @@ different algorithm.
 
 | Setting | Starting value | Meaning |
 | --- | --- | --- |
-| `linesPerBlock` | 10 | Number of complete lines in a cached block; configurable. |
+| Block size | 10 | Fixed number of complete lines per block in `StreamCode`; no public block-size prop. |
 | `sliceBudgetMs` | 8 ms | Work budget for one processing round, called T below. |
 | `continuationDelayMs` | 8 ms | Requested pause before continuing unfinished work. |
 

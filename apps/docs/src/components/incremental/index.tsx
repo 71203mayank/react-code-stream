@@ -2,7 +2,7 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import {
   createIncrementalTokenizer,
   type CachedBlock,
-  type CacheState,
+  type HighlightSnapshot,
 } from 'react-code-stream/incremental'
 import {
   createGrammarStateCodeTokenizer,
@@ -41,9 +41,9 @@ function CacheStream({ tokenizer, source, language }: {
   source: string
   language: string
 }) {
-  const [cache] = useState(() => createIncrementalTokenizer({ tokenizer, language, linesPerBlock: 10 }))
+  const cacheRef = useRef<ReturnType<typeof createIncrementalTokenizer> | null>(null)
   const characters = useMemo(() => Array.from(source), [source])
-  const [snapshot, setSnapshot] = useState<CacheState>(() => cache.update(''))
+  const [snapshot, setSnapshot] = useState<HighlightSnapshot>({ blocks: [] })
   const [streaming, setStreaming] = useState(false)
   const [finished, setFinished] = useState(false)
   const [chunk, setChunk] = useState('')
@@ -52,13 +52,19 @@ function CacheStream({ tokenizer, source, language }: {
   const [error, setError] = useState('')
   const stopStream = useRef<(() => void) | undefined>(undefined)
 
+  useEffect(() => {
+    const cache = createIncrementalTokenizer({ tokenizer, language, onUpdate: setSnapshot,
+      onError: (reason) => setError(reason.message) })
+    cacheRef.current = cache
+    return () => { cache.dispose(); cacheRef.current = null }
+  }, [tokenizer, language])
+
   useEffect(() => () => stopStream.current?.(), [])
 
   function clearCache() {
     stopStream.current?.()
     stopStream.current = undefined
-    cache.reset()
-    setSnapshot(cache.update(''))
+    cacheRef.current?.reset()
     setStreaming(false)
     setFinished(false)
     setChunk('')
@@ -72,7 +78,7 @@ function CacheStream({ tokenizer, source, language }: {
     setStreaming(true)
     stopStream.current = simulateStream(source, {
       onChunk: (update) => {
-        setSnapshot(cache.update(update.source))
+        cacheRef.current?.update(update.source)
         setChunk(update.chunk)
         setChunkCount((count) => count + 1)
         setReceivedCharacters(update.receivedCharacters)
@@ -90,7 +96,9 @@ function CacheStream({ tokenizer, source, language }: {
     })
   }
 
-  const lastCompleted = snapshot.completedBlocks[snapshot.completedBlocks.length - 1]
+  const completedBlocks = snapshot.blocks.filter((block) => (block.source.match(/\n/g) ?? []).length === 10)
+  const trailingBlock = snapshot.blocks.find((block) => (block.source.match(/\n/g) ?? []).length < 10)
+  const lastCompleted = completedBlocks[completedBlocks.length - 1]
   function blockDetails(block: CachedBlock | null | undefined) {
     return block ? {
       id: block.id,
@@ -102,10 +110,10 @@ function CacheStream({ tokenizer, source, language }: {
   const metadata = {
     status: streaming ? 'Streaming' : finished ? 'Finished' : 'Ready',
     linesPerBlock: 10,
-    completedBlockCount: snapshot.completedBlocks.length,
-    completedBlockIds: snapshot.completedBlocks.map((block) => block.id),
+    completedBlockCount: completedBlocks.length,
+    completedBlockIds: completedBlocks.map((block) => block.id),
     lastCompletedBlock: blockDetails(lastCompleted),
-    activeTrailingBlock: blockDetails(snapshot.trailingBlock),
+    activeTrailingBlock: blockDetails(trailingBlock),
     chunksReceived: chunkCount,
     receivedCharacters,
     totalCharacters: characters.length,
@@ -127,15 +135,15 @@ function CacheStream({ tokenizer, source, language }: {
         <section>
           <h3>Completed cache blocks</h3>
           <div className="incremental-demo__output">
-            {snapshot.completedBlocks.length === 0 && <p className="incremental-demo__empty">No completed blocks yet.</p>}
-            {snapshot.completedBlocks.map((block) => <HighlightedBlock key={block.id} block={block} />)}
+            {completedBlocks.length === 0 && <p className="incremental-demo__empty">No completed blocks yet.</p>}
+            {completedBlocks.map((block) => <HighlightedBlock key={block.id} block={block} />)}
           </div>
         </section>
         <section>
           <h3>Trailing block</h3>
           <div className="incremental-demo__output">
-            {snapshot.trailingBlock
-              ? <HighlightedBlock key={snapshot.trailingBlock.id} block={snapshot.trailingBlock} />
+            {trailingBlock
+              ? <HighlightedBlock key={trailingBlock.id} block={trailingBlock} />
               : <p className="incremental-demo__empty">No active trailing block.</p>}
           </div>
           <p className="incremental-demo__hint">The final remainder stays here when streaming finishes.</p>

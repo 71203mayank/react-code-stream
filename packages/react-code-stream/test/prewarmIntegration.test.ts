@@ -19,7 +19,7 @@ vi.mock("shiki", async (importOriginal) => {
 
 it("prewarms real Shiki through the public API and reuses it when time-budget views mount", async () => {
   const { createHighlighter } = await import("shiki");
-  const { prewarmCodeStream, TimeBudgetStreamCode } = await import("../src/index");
+  const { prewarmCodeStream, StreamCode } = await import("../src/index");
   await prewarmCodeStream({
     themes: ["github-dark"], languages: ["typescript", "python", "go", "cpp"],
   });
@@ -45,7 +45,7 @@ it("prewarms real Shiki through the public API and reuses it when time-budget vi
     ];
     for (const [language, source] of examples) {
       await act(async () => {
-        root.render(createElement(TimeBudgetStreamCode, {
+        root.render(createElement(StreamCode, {
           key: language, language, theme: "github-dark", children: source, onError,
         }));
       });

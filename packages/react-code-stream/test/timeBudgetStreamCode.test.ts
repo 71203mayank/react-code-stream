@@ -2,7 +2,7 @@
 import { act, createElement, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { TimeBudgetStreamCode } from "../src/react/TimeBudgetStreamCode";
+import { StreamCode } from "../src/react/StreamCode";
 
 const { highlight, dispose, initialize, getShared } = vi.hoisted(() => ({
   highlight: vi.fn((source: string) => ({
@@ -47,9 +47,8 @@ it("finishes queued blocks, preserves replacements, and cancels work on unmount"
   async function render(source: string) {
     await act(async () => {
       root.render(
-        createElement(TimeBudgetStreamCode, {
+        createElement(StreamCode, {
           children: source,
-          linesPerBlock: 1,
         }),
       );
     });
@@ -57,8 +56,8 @@ it("finishes queued blocks, preserves replacements, and cancels work on unmount"
 
   try {
     for (const source of [
-      "one\ntwo\n<three>",
-      "one\ntwo\n<three> grows",
+      "one\n".repeat(10) + "two\n".repeat(10) + "<three>",
+      "one\n".repeat(10) + "two\n".repeat(10) + "<three> grows",
       "replacement",
       "",
     ]) {
@@ -72,6 +71,10 @@ it("finishes queued blocks, preserves replacements, and cancels work on unmount"
       });
       expect(host.querySelector("code")?.textContent).toBe(source);
       expect(host.querySelector("three")).toBeNull();
+      if (source.startsWith("one")) {
+        expect(host.querySelectorAll("[data-block-id]")).toHaveLength(3);
+        expect(host.querySelector("[data-block-id]")?.textContent).toBe("one\n".repeat(10));
+      }
     }
     await render("pending\nwork");
     const calls = highlight.mock.calls.length;
@@ -102,9 +105,8 @@ it("releases independent scheduler sessions on configuration changes and Strict 
     await act(async () => {
       root.render(
         createElement(StrictMode, null,
-          createElement(TimeBudgetStreamCode, {
+          createElement(StreamCode, {
             children: "first\nsecond\ntail",
-            linesPerBlock: 1,
             sliceBudgetMs,
             theme: "github-light",
           }),
@@ -145,8 +147,8 @@ it("shares pending initialization and keeps surviving streams independent", asyn
   const roots = hosts.map((host) => createRoot(host));
   const onError = vi.fn();
   const renderStream = (index: number, source: string) =>
-    roots[index].render(createElement(TimeBudgetStreamCode, {
-      children: source, language: "typescript", theme: "nord", linesPerBlock: 1, onError,
+    roots[index].render(createElement(StreamCode, {
+      children: source, language: "typescript", theme: "nord", onError,
     }));
 
   try {

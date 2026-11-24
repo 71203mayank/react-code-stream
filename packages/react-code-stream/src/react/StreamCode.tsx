@@ -13,26 +13,30 @@ import { bundledLanguages, type BundledLanguage } from "shiki";
 import {
   createIncrementalTokenizer,
   type CachedBlock,
-  type CacheState,
+  type HighlightSnapshot,
   type IncrementalTokenizer,
 } from "../core/incremental";
 import {
-  createGrammarStateCodeTokenizer,
   DEFAULT_THEME,
   FALLBACK_LANGUAGE,
 } from "../core/tokenizer";
 import "./StreamCode.css";
+import { getSharedTimeBudgetTokenizer } from "../core/sharedHighlighterManager";
+
+const LINES_PER_BLOCK = 10;
 
 /** Public configuration for a continuous, incrementally highlighted code view. */
 export interface StreamCodeProps {
+  /** Processing target per round, checked between whole blocks. Defaults to 8 ms. */
+  sliceBudgetMs?: number;
+  /** Delay before continuing unfinished highlighting. Defaults to 8 ms. */
+  continuationDelayMs?: number;
   /** Entire source received so far. Supply accumulated source on every update. */
   children: string;
   /** Shiki language or alias. Unknown languages use plain text. Defaults to text. */
   language?: string;
-  /** Shiki theme. Changing it initializes a new tokenizer and cache. */
+  /** Shiki theme. Changing it resets the cache and requests a shared tokenizer. */
   theme?: string;
-  /** Complete lines per block; a positive safe integer, defaulting to 10. */
-  linesPerBlock?: number;
   /** Follow new content while within 32 pixels of the bottom. Defaults to false. */
   autoScroll?: boolean;
   /** Additional class for the outer scroll container. */
@@ -49,7 +53,8 @@ export interface StreamCodeProps {
 type SessionProps = StreamCodeProps & {
   language: string;
   theme: string;
-  linesPerBlock: number;
+  sliceBudgetMs: number;
+  continuationDelayMs: number;
 };
 
 // Use layout effects in browsers without requiring a DOM during server rendering.
@@ -64,7 +69,9 @@ const useCommittedLayoutEffect =
 function extractCodeHtml(html: string): string {
   const match = /<code\b[^>]*>([\s\S]*)<\/code>/.exec(html);
   if (!match)
-    throw new Error("StreamCode expected Shiki HTML containing a code element");
+    throw new Error(
+      "StreamCode expected Shiki HTML containing a code element",
+    );
   return match[1];
 }
 
@@ -93,14 +100,15 @@ const HighlightedBlock = memo(function HighlightedBlock({
 
 /**
  * Own the tokenizer, cache, animation frame, and scroll position for one configuration.
- * @param props - Source, presentation options, and fixed language/theme/block size.
+ * @param props - Source, presentation options, and fixed language and theme.
  * The parent remounts this session when configuration changes, isolating old resources.
  */
 const StreamCodeSession = memo(function StreamCodeSession({
   children,
   language,
   theme,
-  linesPerBlock,
+  sliceBudgetMs,
+  continuationDelayMs,
   autoScroll = false,
   className,
   style,
@@ -114,7 +122,7 @@ const StreamCodeSession = memo(function StreamCodeSession({
   const errorHandlerRef = useRef(onError);
   const followingRef = useRef(true);
   const failedRef = useRef(false);
-  const [snapshot, setSnapshot] = useState<CacheState | null>(null);
+  const [snapshot, setSnapshot] = useState<HighlightSnapshot | null>(null);
 
   /** @param reason - Any thrown value, normalized to Error for the latest error callback. */
   const reportError = useCallback((reason: unknown): void => {
@@ -124,8 +132,8 @@ const StreamCodeSession = memo(function StreamCodeSession({
   }, []);
 
   /**
-   * Queue at most one highlight per animation frame and read the latest committed source.
-   * Intermediate source updates are combined without dropping text. A failure clears the
+   * Submit at most one source update per animation frame using the latest committed source.
+   * The scheduler owns highlighting rounds after submission. A failure clears the
    * highlighted snapshot and leaves the code view empty.
    */
   const scheduleUpdate = useCallback((): void => {
@@ -136,7 +144,7 @@ const StreamCodeSession = memo(function StreamCodeSession({
       const cache = cacheRef.current;
       if (!cache) return;
       try {
-        setSnapshot(cache.update(sourceRef.current));
+        cache.update(sourceRef.current);
       } catch (reason) {
         failedRef.current = true;
         cache.reset();
@@ -155,8 +163,8 @@ const StreamCodeSession = memo(function StreamCodeSession({
 
   /**
    * Initialize one tokenizer and cache, then process the latest source received while loading.
-   * Cleanup cancels frames, resets the cache, and releases the highlighter. Late async results
-   * are disposed without updating the component, including during Strict Mode effect replay.
+   * Cleanup cancels frames and disposes this session’s scheduler. The shared tokenizer
+   * stays cached; late async results never attach to an inactive session.
    */
   useEffect(() => {
     let active = true;
@@ -166,28 +174,50 @@ const StreamCodeSession = memo(function StreamCodeSession({
     /** Load the selected grammar/theme and attach the cache only while this effect is active. */
     async function initialize(): Promise<void> {
       try {
-        if (!Number.isSafeInteger(linesPerBlock) || linesPerBlock <= 0) {
-          throw new RangeError("linesPerBlock must be a positive safe integer");
-        }
-        const tokenizer = await createGrammarStateCodeTokenizer({
-          languages: Object.prototype.hasOwnProperty.call(
-            bundledLanguages,
-            language,
-          )
-            ? [language as BundledLanguage]
-            : [],
+        // UNSHARED INITIALIZATION
+        // const tokenizer = await createGrammarStateCodeTokenizer({
+        //   languages: Object.prototype.hasOwnProperty.call(
+        //     bundledLanguages,
+        //     language,
+        //   )
+        //     ? [language as BundledLanguage]
+        //     : [],
+        //   theme,
+        // });
+
+        // SHARED INITIALIZATION
+        const tokenizer = await getSharedTimeBudgetTokenizer(
+          Object.prototype.hasOwnProperty.call(bundledLanguages, language)
+          ? (language as BundledLanguage)
+          : undefined,
           theme,
-        });
+        );
+
         if (!active) {
-          tokenizer.dispose?.();
           return;
         }
-        dispose = () => tokenizer.dispose?.();
-        cacheRef.current = createIncrementalTokenizer({
+
+        const scheduler = createIncrementalTokenizer({
           tokenizer,
           language,
-          linesPerBlock,
+          linesPerBlock: LINES_PER_BLOCK,
+          sliceBudgetMs,
+          continuationDelayMs,
+          onUpdate: (nextSnapshot) => {
+            if (active) setSnapshot(nextSnapshot);
+          },
+          onError: (error) => {
+            if (!active) return;
+            failedRef.current = true;
+            setSnapshot(null);
+            reportError(error);
+          },
         });
+        // Stop this session’s pending rounds; the shared tokenizer stays cached.
+        dispose = () => {
+          scheduler.dispose();
+        };
+        cacheRef.current = scheduler;
         scheduleUpdate();
       } catch (reason) {
         if (active) {
@@ -203,11 +233,17 @@ const StreamCodeSession = memo(function StreamCodeSession({
       if (frameRef.current !== null)
         window.cancelAnimationFrame(frameRef.current);
       frameRef.current = null;
-      cacheRef.current?.reset();
-      cacheRef.current = null;
       dispose?.();
+      cacheRef.current = null;
     };
-  }, [language, theme, linesPerBlock, scheduleUpdate, reportError]);
+  }, [
+    language,
+    theme,
+    sliceBudgetMs,
+    continuationDelayMs,
+    scheduleUpdate,
+    reportError,
+  ]);
 
   /** @param event - Scroll event used to pause following when the reader moves upward. */
   const handleScroll = useCallback((event: UIEvent<HTMLDivElement>): void => {
@@ -216,7 +252,10 @@ const StreamCodeSession = memo(function StreamCodeSession({
       element.scrollHeight - element.clientHeight - element.scrollTop <= 32;
   }, []);
 
-  const displayedSource = snapshot?.previousSource ?? "";
+  // Scrolling follows published highlighting, which can lag the received source.
+  const displayedSource = snapshot
+    ? snapshot.blocks.map((block) => block.source).join("")
+    : "";
 
   /** Follow committed content before paint only while the reader remains near the bottom. */
   useCommittedLayoutEffect(() => {
@@ -225,8 +264,8 @@ const StreamCodeSession = memo(function StreamCodeSession({
       element.scrollTop = element.scrollHeight;
   }, [displayedSource, autoScroll]);
 
-  // Keep completed elements unchanged while only the trailing block grows.
-  const completedBlocks = snapshot?.completedBlocks;
+  // Reuse published block objects so unchanged highlighted blocks skip rendering.
+  const completedBlocks = snapshot?.blocks;
   const completedElements = useMemo(
     () =>
       completedBlocks?.map((block) => (
@@ -235,7 +274,7 @@ const StreamCodeSession = memo(function StreamCodeSession({
     [completedBlocks],
   );
 
-  const firstHtml = completedBlocks?.[0]?.html ?? snapshot?.trailingBlock?.html;
+  const firstHtml = completedBlocks?.[0]?.html;
   const containerStyle = useMemo<CSSProperties>(() => {
     // Preserve Shiki's theme colors after removing its per-block pre wrappers.
     const themeStyle =
@@ -264,12 +303,6 @@ const StreamCodeSession = memo(function StreamCodeSession({
           {snapshot ? (
             <>
               {completedElements}
-              {snapshot.trailingBlock && (
-                <HighlightedBlock
-                  key={snapshot.trailingBlock.id}
-                  block={snapshot.trailingBlock}
-                />
-              )}
             </>
           ) : null}
         </code>
@@ -279,7 +312,9 @@ const StreamCodeSession = memo(function StreamCodeSession({
 });
 
 /**
- * Render accumulated streaming code with cached blocks and animation-frame scheduling.
+ * Render accumulated source using independent, time-budgeted highlighting rounds.
+ * The target is checked between whole blocks; one block may exceed the target.
+ * Published highlighting can lag incoming source until pending rounds finish.
  * @param props - Code as children, highlighting settings, and container options.
  * Use React's key prop to identify the stream; changing it remounts and resets the cache.
  * The code view stays empty until highlighting is available and after failures.
@@ -287,17 +322,24 @@ const StreamCodeSession = memo(function StreamCodeSession({
 export const StreamCode = memo(function StreamCode({
   language = FALLBACK_LANGUAGE,
   theme = DEFAULT_THEME,
-  linesPerBlock = 10,
+  sliceBudgetMs = 8,
+  continuationDelayMs = 8,
   ...props
 }: StreamCodeProps) {
-  const sessionKey = JSON.stringify([language, theme, linesPerBlock]);
+  const sessionKey = JSON.stringify([
+    language,
+    theme,
+    sliceBudgetMs,
+    continuationDelayMs,
+  ]);
   return (
     <StreamCodeSession
       key={sessionKey}
       {...props}
       language={language}
       theme={theme}
-      linesPerBlock={linesPerBlock}
+      sliceBudgetMs={sliceBudgetMs}
+      continuationDelayMs={continuationDelayMs}
     />
   );
 });

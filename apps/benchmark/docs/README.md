@@ -4,10 +4,9 @@ Run `npm ci` at the repository root, then `npm run benchmark`. Open the local
 preview URL printed by Vite. This command builds the library and benchmark in
 production mode. The app is for local use; no hosting is required.
 
-- `/streamcode`: StreamCode versus react-syntax-highlighter's PrismLight.
-- `/time-budget`: TimeBudgetStreamCode versus the same PrismLight comparator.
+- `/time-budget`: StreamCode versus react-syntax-highlighter’s PrismLight.
 
-Navigation reloads the page and cancels any ongoing trial. Corpus files remain
+The removed `/streamcode` route redirects to `/time-budget`. Corpus files remain
 in `apps/docs/src/testCorpus`; Vite bundles those exact files as raw text.
 
 ## Workloads and controls
@@ -21,7 +20,7 @@ exercise grammar differences; the large TypeScript sample exposes growing-file
 costs. These fixtures are representative examples, not an exhaustive workload.
 
 Both package components use ten lines per block with auto-scroll disabled.
-TimeBudgetStreamCode uses an 8 ms processing target and an 8 ms continuation delay.
+StreamCode uses an 8 ms processing target and an 8 ms continuation delay.
 The target is checked between blocks: one expensive block can exceed it. React
 rendering, DOM work, and grammar initialization are not bounded by that target.
 

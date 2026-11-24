@@ -1,7 +1,7 @@
 import * as React from "react";
 import { prewarmCodeStream } from "react-code-stream";
 import { BENCHMARK_THEME } from "./renderers";
-import { namesForVariant, type Renderer } from "./labels";
+import { rendererNames, type Renderer } from "./labels";
 import { percentile, runBenchmark, type Result, type Settings } from "./runner";
 import "./style.css";
 import TypingResults from "./TypingResults";
@@ -35,7 +35,6 @@ interface Report {
 }
 
 function Results({ report }: { report: Report }) {
-  const rendererNames = namesForVariant(report.settings.variant);
   function download() {
     const url = URL.createObjectURL(
       new Blob([JSON.stringify(report, null, 2)], { type: "application/json" }),
@@ -170,21 +169,14 @@ function Results({ report }: { report: Report }) {
           </tbody>
         </table>
       </div>
-      <TypingResults
-        results={report.results}
-        variant={report.settings.variant}
-      />
+      <TypingResults results={report.results} />
       <button onClick={download}>Download raw results (JSON)</button>
     </section>
   );
 }
 
-export default function BenchmarkPage({
-  variant = "streamcode",
-}: {
-  variant?: "streamcode" | "time-budget";
-}) {
-  const rendererNames = namesForVariant(variant);
+export default function BenchmarkPage() {
+  const variant = "time-budget" as const;
   const [prewarm, setPrewarm] = React.useState({ ready: false, message: "Loading highlighting resources…" });
   const [warmup, setWarmup] = React.useState(true);
   const [file, setFile] = React.useState(samples[0][0]);
@@ -221,7 +213,6 @@ export default function BenchmarkPage({
 
   // Start resource loading when the time-budget page mounts, before a run begins.
   React.useEffect(() => {
-    if (variant !== "time-budget") return;
     let active = true;
     const startedAt = performance.now();
     setPrewarm({ ready: false, message: "Loading highlighting resources…" });
@@ -242,10 +233,10 @@ export default function BenchmarkPage({
 
     // Loading belongs to the shared manager and continues after this page unmounts.
     return () => { active = false; };
-  }, [variant]);
+  }, []);
 
   async function start() {
-    if (!host.current || !typingInput.current || running || (variant === "time-budget" && !prewarm.ready)) return;
+    if (!host.current || !typingInput.current || running || !prewarm.ready) return;
     const abort = new AbortController();
     controller.current = abort;
     setRunning(true);
@@ -324,10 +315,6 @@ export default function BenchmarkPage({
 
   return (
     <main className="benchmark-page">
-      <nav>
-        <a href="/streamcode">StreamCode</a> ·{" "}
-        <a href="/time-budget">TimeBudgetStreamCode</a>
-      </nav>
       <p className="eyebrow">React Code Stream</p>
       <h1>Highlighting benchmark</h1>
       <p>
@@ -341,16 +328,14 @@ export default function BenchmarkPage({
           Development build: use the production preview for reportable results.
         </p>
       )}
-      {variant === "time-budget" && (
-        <p role="status">
-          {prewarm.message} Resource prewarming is separate from full-file warmup;
-          JavaScript, HTML, CSS, and other languages load on demand.
-        </p>
-      )}
+      <p role="status">
+        {prewarm.message} Resource prewarming is separate from full-file warmup;
+        JavaScript, HTML, CSS, and other languages load on demand.
+      </p>
       <fieldset disabled={running}>
         <legend>
           Benchmark settings ·{" "}
-          {variant === "time-budget" ? "TimeBudgetStreamCode" : "StreamCode"}
+          StreamCode
         </legend>
         <label>
           <input
@@ -450,7 +435,7 @@ export default function BenchmarkPage({
         trials, plus warmup and rendering time.
       </p>
       <div className="actions">
-        <button onClick={() => void start()} disabled={running || (variant === "time-budget" && !prewarm.ready)}>
+        <button onClick={() => void start()} disabled={running || !prewarm.ready}>
           Run benchmark
         </button>
         <button

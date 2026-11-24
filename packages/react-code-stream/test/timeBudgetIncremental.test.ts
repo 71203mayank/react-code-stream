@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createIncrementalTokenizer, type HighlightSnapshot } from '../src/core/timeBudgetIncremental';
+import { createIncrementalTokenizer, type HighlightSnapshot } from '../src/core/incremental';
 import type { GrammarStateCodeTokenizer } from '../src/core/tokenizer';
 
 beforeEach(() => vi.useFakeTimers());

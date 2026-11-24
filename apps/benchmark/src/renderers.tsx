@@ -1,4 +1,4 @@
-import { StreamCode, TimeBudgetStreamCode } from "react-code-stream";
+import { StreamCode } from "react-code-stream";
 import { PrismLight } from "react-syntax-highlighter";
 import typescript from "react-syntax-highlighter/dist/esm/languages/prism/typescript";
 import javascript from "react-syntax-highlighter/dist/esm/languages/prism/javascript";
@@ -26,32 +26,27 @@ for (const [name, grammar] of Object.entries({
 export const BENCHMARK_THEME = "github-dark";
 
 export function CodeView({
-  variant,
   renderer,
   code,
   language,
   onError,
 }: {
-  variant: "streamcode" | "time-budget";
   renderer: Renderer;
   code: string;
   language: string;
   onError: (error: Error) => void;
 }) {
-  const Component =
-    variant === "time-budget" ? TimeBudgetStreamCode : StreamCode;
   return renderer === "streamcode" ? (
-    <Component
+    <StreamCode
       language={language}
       theme={BENCHMARK_THEME}
-      linesPerBlock={10}
       autoScroll={false}
       className="benchmark-code"
       style={{ height: 430 }}
       onError={onError}
     >
       {code}
-    </Component>
+    </StreamCode>
   ) : (
     <PrismLight
       language={language === "html" ? "markup" : language}

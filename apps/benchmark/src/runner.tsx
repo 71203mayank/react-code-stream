@@ -5,7 +5,7 @@ import { measureTyping, type TypingResult } from "./typing";
 
 export interface Settings {
   warmup: boolean;
-  variant: "streamcode" | "time-budget";
+  variant: "time-budget";
   file: string;
   language: string;
   source: string;
@@ -67,7 +67,6 @@ async function trial(
   const render = (code: string) =>
     root.render(
       <CodeView
-        variant={settings.variant}
         renderer={renderer}
         code={code}
         language={settings.language}

@@ -1,15 +1,12 @@
-import { namesForVariant, type Renderer } from "./labels";
+import { rendererNames, type Renderer } from "./labels";
 import { percentile, type Result } from "./runner";
 import type { StreamStage } from "./typing";
 
 export default function TypingResults({
   results,
-  variant,
 }: {
   results: Result[];
-  variant: "streamcode" | "time-budget";
 }) {
-  const rendererNames = namesForVariant(variant);
   const renderers = (["streamcode", "syntax-highlighter"] as Renderer[]).filter(
     (renderer) => results.some((run) => run.renderer === renderer),
   );
