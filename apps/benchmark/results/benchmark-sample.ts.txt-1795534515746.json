@@ -1,0 +1,365 @@
+{
+  "settings": {
+    "warmup": false,
+    "variant": "time-budget",
+    "file": "sample.ts.txt",
+    "language": "typescript",
+    "renderer": "syntax-highlighter",
+    "mode": "stream",
+    "chunkSize": 10,
+    "intervalMs": 80,
+    "repetitions": 20
+  },
+  "results": [
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 1,
+      "durationMs": 11064.799999952316,
+      "finalLatencyMs": 24.699999809265137,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.40000009536743164,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 2,
+      "durationMs": 11058,
+      "finalLatencyMs": 18.299999952316284,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 33.29999999998836,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.6000001430511475,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 3,
+      "durationMs": 11059.700000047684,
+      "finalLatencyMs": 19.899999856948853,
+      "frameGapCount": 1,
+      "maxFrameGapMs": 66.59999999997672,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 57.60000014305115,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 4,
+      "durationMs": 11065.200000047684,
+      "finalLatencyMs": 25.40000009536743,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.40000009536743164,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 5,
+      "durationMs": 11060.200000047684,
+      "finalLatencyMs": 20.09999990463257,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 2.700000047683716,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 6,
+      "durationMs": 11060.599999904633,
+      "finalLatencyMs": 21.299999952316284,
+      "frameGapCount": 1,
+      "maxFrameGapMs": 66.70000000001164,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 20.200000047683716,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 7,
+      "durationMs": 11059.700000047684,
+      "finalLatencyMs": 19.799999952316284,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.5,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 8,
+      "durationMs": 11059.5,
+      "finalLatencyMs": 19.699999809265137,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.3000001907348633,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 9,
+      "durationMs": 11058.899999856949,
+      "finalLatencyMs": 19.5,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 50,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 3.0999999046325684,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 10,
+      "durationMs": 11059.600000143051,
+      "finalLatencyMs": 19.800000190734863,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.5,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 11,
+      "durationMs": 11059.599999904633,
+      "finalLatencyMs": 20.09999990463257,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 1.7999999523162842,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 12,
+      "durationMs": 11059.700000047684,
+      "finalLatencyMs": 19.5,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.2999999523162842,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 13,
+      "durationMs": 11064.300000190735,
+      "finalLatencyMs": 24.700000047683716,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.3000001907348633,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 14,
+      "durationMs": 11060.100000143051,
+      "finalLatencyMs": 19.799999952316284,
+      "frameGapCount": 2,
+      "maxFrameGapMs": 83.40000000002328,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 39.5,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 15,
+      "durationMs": 11059.899999856949,
+      "finalLatencyMs": 20,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.8999998569488525,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 16,
+      "durationMs": 11062.5,
+      "finalLatencyMs": 22.700000047683716,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.7999999523162842,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 17,
+      "durationMs": 11058.900000095367,
+      "finalLatencyMs": 19.100000143051147,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.40000009536743164,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 18,
+      "durationMs": 11069.199999809265,
+      "finalLatencyMs": 29.299999952316284,
+      "frameGapCount": 2,
+      "maxFrameGapMs": 133.29999999998836,
+      "longTaskCount": 1,
+      "longTaskMs": 55,
+      "maxDeliveryDelayMs": 97.39999985694885,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 19,
+      "durationMs": 11069.200000047684,
+      "finalLatencyMs": 29.600000143051147,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 33.399999999965075,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 1.2999999523162842,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "syntax-highlighter",
+      "repetition": 20,
+      "durationMs": 11072.200000047684,
+      "finalLatencyMs": 31.90000009536743,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000046566,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 2,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    }
+  ],
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "timestamp": "2026-11-24T15:32:48.746Z",
+  "production": true,
+  "viewport": {
+    "width": 1206,
+    "height": 961,
+    "devicePixelRatio": 1
+  },
+  "hardwareConcurrency": 8,
+  "sourceCodePoints": 1390
+}
