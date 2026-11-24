@@ -1,8 +1,10 @@
 import { copyFile } from 'node:fs/promises'
 
-for (const name of ['README.md', 'LICENSE']) {
-  await copyFile(new URL(`../../../${name}`, import.meta.url), new URL(`../${name}`, import.meta.url))
-}
+// The package README is maintained separately for npm consumers.
+await copyFile(
+  new URL('../../../LICENSE', import.meta.url),
+  new URL('../LICENSE', import.meta.url),
+)
 
 // Preserve the CSS module declaration referenced by the component's generated types.
 await copyFile(

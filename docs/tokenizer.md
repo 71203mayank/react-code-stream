@@ -58,6 +58,41 @@ flowchart LR
     G --> H[Continue with block 3]
 ```
 
+## JavaScript regex engine
+
+The standalone tokenizer factories and shared highlighter manager explicitly use:
+
+```ts
+engine: createJavaScriptRegexEngine({ forgiving: true })
+```
+
+Shiki's JavaScript engine converts TextMate grammar patterns to native JavaScript
+regular expressions. This avoids requiring the Oniguruma WebAssembly engine for
+highlighting. It does not make initialization or tokenization free: grammar/theme
+loading and regex conversion still have costs.
+
+`forgiving: true` suppresses unsupported-pattern conversion errors for best-effort
+highlighting. Some patterns may therefore produce highlighting mismatches; it does
+not guarantee identical results to Oniguruma or suppress every highlighting error.
+Runtime regex support can also affect grammar compatibility. See
+[Shiki's regex engine guide](https://shiki.style/guide/regex-engines) for engine
+behavior and compatibility details.
+
+## Shared versus independently owned tokenizers
+
+`StreamCode` uses the shared manager described in the
+[architecture](./architecture.md#shared-initialization-and-prewarming), rather than
+creating a new highlighter for every mount. `prewarmCodeStream` loads languages
+and themes into that same shared highlighter. Its tokenizer wrappers capture a
+theme but retain no per-stream grammar state and expose no disposal method.
+
+The factories below create independent highlighters. Calling
+`createGrammarStateCodeTokenizer` does not reuse resources loaded by
+`prewarmCodeStream`; dispose that owned tokenizer when finished.
+`createGrammarStateTokenizerFromHighlighter` instead borrows an existing
+highlighter whose languages and theme must already be loaded. The owner controls
+that highlighter's lifetime.
+
 ## The two tokenizer functions
 
 | Function | Purpose | Returns |
@@ -138,9 +173,10 @@ Follow these rules when adding the cache:
 - Reuse states within the same tokenizer instance, language, and theme. Reset
   the cache when those settings change.
 - If an earlier block changes, recompute it and the dependent blocks after it.
-- Render each block's HTML separately: every result includes its own `pre` and
-  `code` elements.
+- Each tokenizer result includes `pre` and `code` wrappers. `StreamCode` extracts
+  their inner markup and renders block spans inside a single `pre`/`code` container.
 
-The docs demo uses 10 lines per block as an initial experiment. The final block
-size should be chosen by measuring representative code, since line lengths vary.
+`StreamCode` fixes the block size at ten newline-terminated lines. Long lines can
+still make an individual block expensive; the time budget is checked only after
+a whole block has been highlighted.
 

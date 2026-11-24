@@ -24,13 +24,11 @@ import "./StreamCode.css";
 import { getSharedTimeBudgetTokenizer } from "../core/sharedHighlighterManager";
 
 const LINES_PER_BLOCK = 10;
+const SLICE_BUDGET_MS = 8;
+const CONTINUATION_DELAY_MS = 8;
 
 /** Public configuration for a continuous, incrementally highlighted code view. */
 export interface StreamCodeProps {
-  /** Processing target per round, checked between whole blocks. Defaults to 8 ms. */
-  sliceBudgetMs?: number;
-  /** Delay before continuing unfinished highlighting. Defaults to 8 ms. */
-  continuationDelayMs?: number;
   /** Entire source received so far. Supply accumulated source on every update. */
   children: string;
   /** Shiki language or alias. Unknown languages use plain text. Defaults to text. */
@@ -53,8 +51,6 @@ export interface StreamCodeProps {
 type SessionProps = StreamCodeProps & {
   language: string;
   theme: string;
-  sliceBudgetMs: number;
-  continuationDelayMs: number;
 };
 
 // Use layout effects in browsers without requiring a DOM during server rendering.
@@ -107,8 +103,6 @@ const StreamCodeSession = memo(function StreamCodeSession({
   children,
   language,
   theme,
-  sliceBudgetMs,
-  continuationDelayMs,
   autoScroll = false,
   className,
   style,
@@ -201,8 +195,8 @@ const StreamCodeSession = memo(function StreamCodeSession({
           tokenizer,
           language,
           linesPerBlock: LINES_PER_BLOCK,
-          sliceBudgetMs,
-          continuationDelayMs,
+          sliceBudgetMs: SLICE_BUDGET_MS,
+          continuationDelayMs: CONTINUATION_DELAY_MS,
           onUpdate: (nextSnapshot) => {
             if (active) setSnapshot(nextSnapshot);
           },
@@ -239,8 +233,6 @@ const StreamCodeSession = memo(function StreamCodeSession({
   }, [
     language,
     theme,
-    sliceBudgetMs,
-    continuationDelayMs,
     scheduleUpdate,
     reportError,
   ]);
@@ -322,24 +314,15 @@ const StreamCodeSession = memo(function StreamCodeSession({
 export const StreamCode = memo(function StreamCode({
   language = FALLBACK_LANGUAGE,
   theme = DEFAULT_THEME,
-  sliceBudgetMs = 8,
-  continuationDelayMs = 8,
   ...props
 }: StreamCodeProps) {
-  const sessionKey = JSON.stringify([
-    language,
-    theme,
-    sliceBudgetMs,
-    continuationDelayMs,
-  ]);
+  const sessionKey = JSON.stringify([language, theme]);
   return (
     <StreamCodeSession
       key={sessionKey}
       {...props}
       language={language}
       theme={theme}
-      sliceBudgetMs={sliceBudgetMs}
-      continuationDelayMs={continuationDelayMs}
     />
   );
 });

@@ -101,14 +101,13 @@ it("releases independent scheduler sessions on configuration changes and Strict 
   const host = document.createElement("div");
   const root = createRoot(host);
 
-  async function render(sliceBudgetMs: number) {
+  async function render(theme: string) {
     await act(async () => {
       root.render(
         createElement(StrictMode, null,
           createElement(StreamCode, {
             children: "first\nsecond\ntail",
-            sliceBudgetMs,
-            theme: "github-light",
+            theme,
           }),
         ),
       );
@@ -117,13 +116,13 @@ it("releases independent scheduler sessions on configuration changes and Strict 
   }
 
   try {
-    await render(8);
+    await render("github-light");
     expect(initialize).toHaveBeenCalledTimes(1);
     expect(dispose).not.toHaveBeenCalled();
     expect(host.querySelector("code")?.textContent).toBe("first\nsecond\ntail");
-    await render(4);
+    await render("nord");
     expect(initialize).toHaveBeenCalledTimes(1);
-    // Changing the budget remounts the session; Strict Mode replays its effects.
+    // Changing the theme remounts the session; Strict Mode replays its effects.
     expect(dispose).not.toHaveBeenCalled();
     expect(host.querySelector("code")?.textContent).toBe("first\nsecond\ntail");
   } finally {

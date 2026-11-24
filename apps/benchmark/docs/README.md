@@ -4,9 +4,9 @@ Run `npm ci` at the repository root, then `npm run benchmark`. Open the local
 preview URL printed by Vite. This command builds the library and benchmark in
 production mode. The app is for local use; no hosting is required.
 
-- `/time-budget`: StreamCode versus react-syntax-highlighter’s PrismLight.
+The app compares StreamCode with react-syntax-highlighter’s PrismLight.
 
-The removed `/streamcode` route redirects to `/time-budget`. Corpus files remain
+Open the preview URL at `/`. Corpus files remain
 in `apps/docs/src/testCorpus`; Vite bundles those exact files as raw text.
 
 ## Workloads and controls
@@ -19,19 +19,40 @@ measuring bulk rendering rather than incremental performance. Corpus languages
 exercise grammar differences; the large TypeScript sample exposes growing-file
 costs. These fixtures are representative examples, not an exhaustive workload.
 
-Both package components use ten lines per block with auto-scroll disabled.
+StreamCode uses ten lines per block with auto-scroll disabled.
 StreamCode uses an 8 ms processing target and an 8 ms continuation delay.
 The target is checked between blocks: one expensive block can exceed it. React
 rendering, DOM work, and grammar initialization are not bounded by that target.
 
+## Resource prewarming, shared initialization, and warmup
+
+On page mount, the harness awaits `prewarmCodeStream` for `github-dark` and the
+TypeScript, Python, Go, and C++ grammars. Run stays disabled until that completes;
+a failure is shown in the page status. JavaScript, HTML, CSS, and other resources
+load when requested. This initial prewarming happens outside trial measurement,
+even when full-file warmup is disabled.
+
 Full-file warmup is enabled by default. Each trial mounts a fresh component,
 renders the full file outside measurement, then clears it and waits before
-submitting the measured workload. Disable warmup to start delivery on an unmounted
-renderer: component initialization and asynchronous Shiki setup then count toward
-completion. No full-file pre-render happens in this mode. Source fixture loading
-is outside measurement in both modes. Neither mode resets browser module, network,
-JIT, or engine caches. For an exploratory first-use measurement, reload the page
-and record a single trial; do not call repeated no-warmup trials cold starts.
+submitting the measured workload. This warms highlighting and rendering in
+addition to resources. Disable warmup to mount the renderer during measurement,
+without a full-file pre-render. Component setup and any resource loading still
+needed can then contribute to completion time.
+
+Fresh component mounts reuse the module's shared Shiki highlighter and loaded
+resources. Neither mode resets browser module, network, JIT, or engine caches.
+Source fixture loading is outside measurement in both modes. Reloading the page
+also repeats the harness's resource prewarming, so even a first no-warmup trial
+is not a measurement of fully cold Shiki initialization. Record the prewarmed
+resource list and warmup setting when interpreting results.
+
+StreamCode configures Shiki's JavaScript regex engine with `forgiving: true`,
+which uses native regexes rather than requiring the Oniguruma WebAssembly engine
+for highlighting. Unsupported pattern conversion can produce highlighting
+mismatches. See the [tokenizer notes](../../../docs/tokenizer.md#javascript-regex-engine)
+and [shared initialization architecture](../../../docs/architecture.md#shared-initialization-and-prewarming).
+Engine choice is part of the benchmark configuration, not an isolated comparison
+of scheduling strategies.
 
 ## Measurements and relevance
 
@@ -58,9 +79,8 @@ Use production preview, keep the tab visible, close DevTools and busy applicatio
 and keep browser version, power mode, hardware, viewport, corpus, and delivery
 settings fixed. Hidden tabs abort the run. Repeat measurements in multiple fresh
 sessions. Comparators alternate first position across repetitions, reducing order
-bias without eliminating thermal or cache effects. The two component routes run
-separately: compare exported reports with identical settings and alternate route
-order across sessions.
+bias without eliminating thermal or cache effects. Compare exported reports
+with identical settings across sessions.
 
 The default five repetitions are exploratory. Median and nearest-rank p95 are
 computed across trial-level final latencies, not per-chunk latencies. With fewer
