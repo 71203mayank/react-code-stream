@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react-code-stream": "0.1.0",
     "react": "^19.2.8",
+    "react-code-stream": "0.2.0",
     "react-dom": "^19.2.8"
   },
   "devDependencies": {

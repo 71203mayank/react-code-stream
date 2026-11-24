@@ -1,6 +1,6 @@
 {
   "name": "react-code-stream",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A Shiki-powered React syntax highlighter for AI code streams.",
   "license": "MIT",
   "repository": {
@@ -8,7 +8,13 @@
     "url": "git+https://github.com/71203mayank/react-code-stream.git",
     "directory": "packages/react-code-stream"
   },
-  "keywords": ["react", "syntax-highlighting", "shiki", "streaming", "ai"],
+  "keywords": [
+    "react",
+    "syntax-highlighting",
+    "shiki",
+    "streaming",
+    "ai"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -27,8 +33,14 @@
       "import": "./dist/incremental.js"
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
-  "sideEffects": ["**/*.css"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json && node scripts/copy-package-docs.mjs",
     "typecheck": "tsc -p tsconfig.json",
