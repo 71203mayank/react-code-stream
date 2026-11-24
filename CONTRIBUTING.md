@@ -27,7 +27,8 @@ Open the URL printed by Vite. Rebuild the library after changing its source to t
 ## Where to make changes
 
 - `packages/react-code-stream`: the React component, tokenizer, incremental cache, and tests.
-- `apps/docs`: the playground and benchmark demos.
+- `apps/docs`: the documentation playground and shared test corpus.
+- `apps/benchmark`: local-only benchmark app; see its `docs/README.md`.
 - `docs`: architecture and design notes.
 
 See the [README](README.md) for usage and the [architecture notes](docs/architecture.md) for implementation details.

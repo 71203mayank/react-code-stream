@@ -78,7 +78,7 @@ function CorpusStream({ source, language }: { source: string; language: string }
         </div>
         <div className="panel">
           <p className="panel-label">StreamCode output · 10 lines per block</p>
-          <StreamCode language={language} linesPerBlock={10} autoScroll={autoScroll}
+          <StreamCode language={language} autoScroll={autoScroll}
             className="stream-code-demo__output" style={{ height: 430 }}
             onError={(reason) => setError(reason.message)} aria-label="Streamed corpus code">
             {code}

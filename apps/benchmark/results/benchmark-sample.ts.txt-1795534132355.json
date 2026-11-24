@@ -1,0 +1,365 @@
+{
+  "settings": {
+    "warmup": false,
+    "variant": "time-budget",
+    "file": "sample.ts.txt",
+    "language": "typescript",
+    "renderer": "streamcode",
+    "mode": "stream",
+    "chunkSize": 10,
+    "intervalMs": 80,
+    "repetitions": 20
+  },
+  "results": [
+    {
+      "renderer": "streamcode",
+      "repetition": 1,
+      "durationMs": 11054,
+      "finalLatencyMs": 14.299999952316284,
+      "frameGapCount": 2,
+      "maxFrameGapMs": 183.1999999999971,
+      "longTaskCount": 4,
+      "longTaskMs": 451,
+      "maxDeliveryDelayMs": 144.59999990463257,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 2,
+      "durationMs": 11058.600000143051,
+      "finalLatencyMs": 18.700000047683716,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.80000000000291,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.5,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 3,
+      "durationMs": 11059.899999856949,
+      "finalLatencyMs": 20.5,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.80000000000291,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.39999985694885254,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 4,
+      "durationMs": 11062.5,
+      "finalLatencyMs": 22.800000190734863,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.80000000000291,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.5,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 5,
+      "durationMs": 11059.200000047684,
+      "finalLatencyMs": 19.09999990463257,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.80000000000291,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.6000001430511475,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 6,
+      "durationMs": 11060.900000095367,
+      "finalLatencyMs": 20.799999952316284,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.80000000000291,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.6000001430511475,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 7,
+      "durationMs": 11061.199999809265,
+      "finalLatencyMs": 21.199999809265137,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.80000000000291,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.2999999523162842,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 8,
+      "durationMs": 11060,
+      "finalLatencyMs": 19.90000009536743,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.80000000000291,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.9000000953674316,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 9,
+      "durationMs": 11061.599999904633,
+      "finalLatencyMs": 21.5,
+      "frameGapCount": 1,
+      "maxFrameGapMs": 1349.7000000000116,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 1352.6999998092651,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 10,
+      "durationMs": 11061.5,
+      "finalLatencyMs": 21.299999952316284,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000017462,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.7000000476837158,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 11,
+      "durationMs": 11059.299999952316,
+      "finalLatencyMs": 19.199999809265137,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000017462,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 2.9000000953674316,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 12,
+      "durationMs": 11061,
+      "finalLatencyMs": 21.399999856948853,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000017462,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.3000001907348633,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 13,
+      "durationMs": 11063.600000143051,
+      "finalLatencyMs": 23.700000047683716,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000017462,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.40000009536743164,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 14,
+      "durationMs": 11059.800000190735,
+      "finalLatencyMs": 20.40000009536743,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000017462,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.40000009536743164,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 15,
+      "durationMs": 11059.099999904633,
+      "finalLatencyMs": 19.09999990463257,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 33.39999999999418,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.5999999046325684,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 16,
+      "durationMs": 11060.799999952316,
+      "finalLatencyMs": 20.699999809265137,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 16.800000000017462,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.2999999523162842,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 17,
+      "durationMs": 11061.099999904633,
+      "finalLatencyMs": 21.09999990463257,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 33.39999999999418,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 19.899999856948853,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 18,
+      "durationMs": 11060.700000047684,
+      "finalLatencyMs": 21.300000190734863,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 50,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 23.200000047683716,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 19,
+      "durationMs": 11061.699999809265,
+      "finalLatencyMs": 22.5,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 50,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 2.5999999046325684,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    },
+    {
+      "renderer": "streamcode",
+      "repetition": 20,
+      "durationMs": 11059.800000190735,
+      "finalLatencyMs": 19.800000190734863,
+      "frameGapCount": 0,
+      "maxFrameGapMs": 33.30000000001746,
+      "longTaskCount": 0,
+      "longTaskMs": 0,
+      "maxDeliveryDelayMs": 0.6000001430511475,
+      "sourcePreserved": true,
+      "typing": {
+        "eventTimingSupported": true,
+        "keydowns": [],
+        "events": []
+      }
+    }
+  ],
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "timestamp": "2026-11-24T15:28:31.895Z",
+  "production": true,
+  "viewport": {
+    "width": 1206,
+    "height": 961,
+    "devicePixelRatio": 1
+  },
+  "hardwareConcurrency": 8,
+  "sourceCodePoints": 1390
+}
